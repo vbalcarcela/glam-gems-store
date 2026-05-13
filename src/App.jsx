@@ -1,34 +1,29 @@
-const productos = [
-  {
-    id: 1,
-    nombre: "Collar Elegance",
-    precio: "Q250",
-    descripcion: "Diseño delicado con acabado premium.",
-    imagen:
-      "https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop",
-  },
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebase";
 
-  {
-    id: 2,
-    nombre: "Pulsera Gold",
-    precio: "Q180",
-    descripcion: "Elegancia minimalista para cualquier ocasión.",
-    imagen:
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1200&auto=format&fit=crop",
-  },
-
-  {
-    id: 3,
-    nombre: "Anillo Luxury",
-    precio: "Q320",
-    descripcion: "Brillo sofisticado y diseño exclusivo.",
-    imagen:
-      "https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=1200&auto=format&fit=crop",
-  },
-]
 
 export default function App() {
-  return (
+  const [productos, setProductos] = useState([]);
+
+useEffect(() => {
+  const obtenerProductos = async () => {
+    const querySnapshot = await getDocs(collection(db, "productos"));
+
+    const productosFirebase = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setProductos(productosFirebase);
+  };
+
+  obtenerProductos();
+}, []);
+
+console.log(productos);
+
+return (
     <div className="min-h-screen bg-[#f8f5f2]">
 
       {/* NAVBAR */}
@@ -127,10 +122,14 @@ export default function App() {
               className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition"
             >
               <img
-                src={producto.imagen}
-                alt={producto.nombre}
-                className="h-80 w-full object-cover"
-              />
+  src={producto.imagen}
+  alt={producto.nombre}
+  className="h-80 w-full object-cover"
+  onError={(e) => {
+    e.target.src =
+      "https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop";
+  }}
+/>
 
               <div className="p-6">
                 <h3 className="text-2xl font-semibold text-gray-800">
