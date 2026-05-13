@@ -24,48 +24,50 @@ export default function App() {
     <div className="bg-[#f8f5f2] min-h-screen">
 
       {/* HERO */}
-      <section className="min-h-screen flex items-center px-6 py-20">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <section className="min-h-screen flex items-center justify-center px-6 py-16 overflow-hidden">
 
-          {/* TEXTO */}
-          <div>
+  <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-            <p className="uppercase tracking-[6px] text-sm text-gray-500 mb-4">
-              Glam Gems
-            </p>
+    {/* TEXTO */}
+    <div className="max-w-xl">
 
-            <h1 className="text-5xl md:text-7xl font-semibold leading-tight mb-6">
-              Joyas que elevan tu estilo
-            </h1>
+      <p className="uppercase tracking-[6px] text-sm text-gray-500 mb-4">
+        Glam Gems
+      </p>
 
-            <p className="text-gray-600 text-lg mb-8 max-w-xl">
-              Accesorios elegantes y regalos especiales para cada ocasión.
-            </p>
+      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold leading-tight mb-6">
+        Joyas que elevan tu estilo
+      </h1>
 
-            <a
-              href="https://wa.me/50252914227"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition"
-            >
-              Comprar por WhatsApp
-            </a>
+      <p className="text-gray-600 text-lg mb-8">
+        Accesorios elegantes y regalos especiales para cada ocasión.
+      </p>
 
-          </div>
+      <a
+        href="https://wa.me/50252914227"
+        target="_blank"
+        rel="noreferrer"
+        className="inline-block bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition"
+      >
+        Comprar por WhatsApp
+      </a>
 
-          {/* IMAGEN */}
-          <div>
+    </div>
 
-            <img
-              src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
-              alt="joyas"
-              className="w-full h-[350px] md:h-[600px] object-cover rounded-3xl shadow-2xl"
-            />
+    {/* IMAGEN */}
+    <div className="flex justify-center">
 
-          </div>
+      <img
+        src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
+        alt="joyas"
+        className="w-full max-w-[550px] h-[350px] md:h-[650px] object-cover rounded-3xl shadow-2xl"
+      />
 
-        </div>
-      </section>
+    </div>
+
+  </div>
+
+</section>
 
       {/* PRODUCTOS */}
       <section className="py-24 px-6">
