@@ -24,7 +24,7 @@ export default function App() {
     <div>
 
       {/* HERO */}
-      <section className="h-screen bg-[#f8f5f2] flex items-center justify-center px-6">
+      <section className="min-h-screen bg-[#f8f5f2] flex items-center justify-center px-6 py-20">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
 
           <div>
@@ -41,7 +41,7 @@ export default function App() {
             </p>
 
             <a
-              href="https://wa.me/50200000000"
+              href="https://wa.me/50252914227"
               target="_blank"
               className="bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition"
             >
@@ -53,7 +53,7 @@ export default function App() {
             <img
               src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
               alt="joyas"
-              className="rounded-3xl shadow-2xl h-[600px] w-full object-cover"
+              className="rounded-3xl shadow-2xl h-[450px] md:h-[600px] w-full object-cover"
             />
           </div>
 
@@ -75,7 +75,7 @@ export default function App() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
             {productos.map((producto) => (
 
@@ -87,7 +87,7 @@ export default function App() {
                 <img
                   src={producto.imagen}
                   alt={producto.nombre}
-                  className="h-80 w-full object-cover"
+                  className="h-64 w-full object-cover"
                   onError={(e) => {
                     e.target.src =
                       "https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop";
@@ -96,7 +96,7 @@ export default function App() {
 
                 <div className="p-6">
 
-                  <h3 className="text-2xl font-semibold mb-2">
+                  <h3 className="text-xl font-semibold mb-2">
                     {producto.nombre}
                   </h3>
 
@@ -104,16 +104,16 @@ export default function App() {
                     {producto.descripcion}
                   </p>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
 
-                    <span className="text-2xl font-bold">
+                    <span className="text-xl font-bold">
                       Q{producto.precio}
                     </span>
 
                     <a
                       href={`https://wa.me/50252914227?text=Hola,%20quiero%20comprar%20${producto.nombre}`}
                       target="_blank"
-                      className="bg-black text-white px-5 py-3 rounded-full hover:bg-gray-800 transition"
+                      className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition text-sm whitespace-nowrap"
                     >
                       Comprar
                     </a>
