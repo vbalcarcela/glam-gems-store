@@ -21,60 +21,61 @@ export default function App() {
   }, []);
 
   return (
-    <div className="bg-[#f8f5f2] min-h-screen">
+    <div className="bg-[#f8f5f2] min-h-screen overflow-x-hidden">
 
       {/* HERO */}
-      <section className="min-h-screen flex items-center justify-center px-6 py-16 overflow-hidden">
+      <section className="min-h-screen flex items-center justify-center px-6 py-20">
 
-  <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-    {/* TEXTO */}
-    <div className="max-w-xl">
+          {/* TEXTO */}
+          <div className="max-w-xl">
 
-      <p className="uppercase tracking-[6px] text-sm text-gray-500 mb-4">
-        Glam Gems
-      </p>
+            <p className="uppercase tracking-[6px] text-sm text-gray-500 mb-4">
+              Glam Gems
+            </p>
 
-      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold leading-tight mb-6">
-        Joyas que elevan tu estilo
-      </h1>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold leading-tight mb-6">
+              Joyas que elevan tu estilo
+            </h1>
 
-      <p className="text-gray-600 text-lg mb-8">
-        Accesorios elegantes y regalos especiales para cada ocasión.
-      </p>
+            <p className="text-gray-600 text-lg mb-8">
+              Accesorios elegantes y regalos especiales para cada ocasión.
+            </p>
 
-      <a
-        href="https://wa.me/50252914227"
-        target="_blank"
-        rel="noreferrer"
-        className="inline-block bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition"
-      >
-        Comprar por WhatsApp
-      </a>
+            <a
+              href="https://wa.me/50252914227"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition"
+            >
+              Comprar por WhatsApp
+            </a>
 
-    </div>
+          </div>
 
-    {/* IMAGEN */}
-    <div className="flex justify-center">
+          {/* IMAGEN */}
+          <div className="flex justify-center">
 
-      <img
-        src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
-        alt="joyas"
-        className="w-full max-w-[550px] h-[350px] md:h-[650px] object-cover rounded-3xl shadow-2xl"
-      />
+            <img
+              src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
+              alt="joyas"
+              className="w-full max-w-[550px] h-[350px] md:h-[650px] object-cover rounded-3xl shadow-2xl"
+            />
 
-    </div>
+          </div>
 
-  </div>
+        </div>
 
-</section>
+      </section>
 
       {/* PRODUCTOS */}
-      <section className="py-24 px-6">
+      <section className="py-32 px-6">
 
         <div className="max-w-7xl mx-auto">
 
-          <div className="text-center mb-16">
+          {/* TITULO */}
+          <div className="text-center mb-20">
 
             <p className="uppercase tracking-[5px] text-gray-500 text-sm mb-3">
               Catálogo
@@ -87,16 +88,16 @@ export default function App() {
           </div>
 
           {/* GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14 place-items-center">
 
             {productos.map((producto) => (
 
               <div
                 key={producto.id}
-                className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300"
+                className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 w-full max-w-[380px]"
               >
 
-                {/* IMAGEN PRODUCTO */}
+                {/* IMAGEN */}
                 <img
                   src={producto.imagen}
                   alt={producto.nombre}
@@ -110,17 +111,17 @@ export default function App() {
                 {/* INFO */}
                 <div className="p-6">
 
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3 className="text-2xl font-semibold mb-2">
                     {producto.nombre}
                   </h3>
 
-                  <p className="text-gray-500 text-sm mb-5 min-h-[40px]">
+                  <p className="text-gray-500 text-base mb-6 min-h-[50px]">
                     {producto.descripcion || "Joya elegante y sofisticada"}
                   </p>
 
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
-                    <span className="text-xl font-bold">
+                    <span className="text-2xl font-bold">
                       Q{producto.precio}
                     </span>
 
@@ -128,7 +129,7 @@ export default function App() {
                       href={`https://wa.me/50252914227?text=Hola,%20quiero%20comprar%20${producto.nombre}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition text-sm whitespace-nowrap"
+                      className="bg-black text-white px-5 py-3 rounded-full hover:bg-gray-800 transition text-sm whitespace-nowrap text-center"
                     >
                       Comprar
                     </a>
@@ -148,17 +149,17 @@ export default function App() {
       </section>
 
       {/* BENEFICIOS */}
-      <section className="bg-white py-24 px-6">
+      <section className="bg-white py-32 px-6 mt-20">
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-center">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-center">
 
           <div>
 
-            <h3 className="text-2xl font-semibold mb-4">
+            <h3 className="text-3xl font-semibold mb-4">
               Calidad Premium
             </h3>
 
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-lg">
               Joyas seleccionadas cuidadosamente para resaltar tu estilo.
             </p>
 
@@ -166,11 +167,11 @@ export default function App() {
 
           <div>
 
-            <h3 className="text-2xl font-semibold mb-4">
+            <h3 className="text-3xl font-semibold mb-4">
               Envíos
             </h3>
 
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-lg">
               Entregas rápidas y seguras.
             </p>
 
@@ -178,11 +179,11 @@ export default function App() {
 
           <div>
 
-            <h3 className="text-2xl font-semibold mb-4">
+            <h3 className="text-3xl font-semibold mb-4">
               Atención Personalizada
             </h3>
 
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-lg">
               Te ayudamos a elegir el regalo perfecto.
             </p>
 
@@ -193,13 +194,13 @@ export default function App() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-black text-white py-12 text-center">
+      <footer className="bg-black text-white py-16 text-center mt-10">
 
-        <h2 className="text-3xl font-semibold mb-3">
+        <h2 className="text-4xl font-semibold mb-4">
           Glam Gems
         </h2>
 
-        <p className="text-gray-400 mb-2">
+        <p className="text-gray-400 text-lg mb-3">
           Joyas y regalos especiales
         </p>
 
