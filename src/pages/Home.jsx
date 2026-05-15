@@ -147,17 +147,17 @@ export default function Home() {
       {/* NAVBAR */}
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5">
 
           {/* LOGO */}
-          <h1 className="text-2xl font-black md:text-3xl">
+          <h1 className="text-3xl font-black">
 
             Glam Gems
 
           </h1>
 
           {/* MENU DESKTOP */}
-          <nav className="hidden items-center gap-10 md:flex">
+          <nav className="hidden items-center gap-14 md:flex">
 
             <a
               href="#inicio"
@@ -183,14 +183,14 @@ export default function Home() {
           </nav>
 
           {/* DERECHA */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
 
             {/* CARRITO */}
             <button
               onClick={() =>
                 setCarritoAbierto(!carritoAbierto)
               }
-              className="rounded-full border border-black px-4 py-2 text-sm font-semibold transition hover:bg-black hover:text-white"
+              className="rounded-full border border-black px-5 py-3 text-sm font-semibold transition hover:bg-black hover:text-white"
             >
 
               Carrito ({carrito.length})
@@ -202,7 +202,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-full bg-black px-5 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800 md:block"
+              className="hidden rounded-full bg-black px-6 py-3 text-sm text-white transition hover:bg-gray-800 md:block"
             >
               WhatsApp
             </a>
@@ -212,7 +212,7 @@ export default function Home() {
               onClick={() =>
                 setMenuAbierto(!menuAbierto)
               }
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-black transition hover:bg-black hover:text-white md:hidden"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-black transition hover:bg-black hover:text-white md:hidden"
             >
               ☰
             </button>
@@ -261,7 +261,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-black px-5 py-3 text-center text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
+              className="rounded-full bg-black px-5 py-3 text-center text-white"
             >
               WhatsApp
             </a>
@@ -275,25 +275,25 @@ export default function Home() {
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 md:grid-cols-2 md:px-6 md:py-20"
+        className="mx-auto grid max-w-[1400px] items-center gap-16 px-6 py-10 lg:grid-cols-2"
       >
 
         {/* TEXTO */}
-        <div className="text-center md:text-left">
+        <div>
 
-          <p className="mb-4 text-sm tracking-[6px] text-[#b68b4c]">
+          <p className="mb-6 text-sm tracking-[10px] text-[#b68b4c]">
 
             GLAM GEMS
 
           </p>
 
-          <h2 className="mb-5 text-3xl font-black leading-tight md:text-5xl lg:text-6xl">
+          <h2 className="mb-8 text-5xl font-black leading-[1.05] lg:text-7xl">
 
             Joyas que elevan tu estilo
 
           </h2>
 
-          <p className="mb-7 max-w-lg text-base leading-relaxed text-gray-600 md:text-lg">
+          <p className="mb-10 max-w-xl text-xl leading-relaxed text-gray-600">
 
             Accesorios elegantes y regalos especiales
             para cada ocasión.
@@ -302,7 +302,7 @@ export default function Home() {
 
           <a
             href="#catalogo"
-            className="inline-block rounded-full bg-black px-8 py-4 text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
+            className="inline-block rounded-full bg-black px-8 py-4 text-lg text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
           </a>
@@ -315,7 +315,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="joyas"
-            className="h-[260px] w-full rounded-[28px] object-cover shadow-2xl md:h-[500px]"
+            className="h-[650px] w-full rounded-[40px] object-cover shadow-2xl"
           />
 
         </div>
@@ -325,82 +325,136 @@ export default function Home() {
       {/* CARRITO */}
       {carritoAbierto && (
 
-        <section className="mx-auto mb-20 max-w-7xl px-4 md:px-6">
+        <section className="fixed right-0 top-0 z-[999] h-screen w-full max-w-[420px] border-l border-gray-200 bg-white shadow-2xl">
 
-          <div className="rounded-[28px] bg-white p-6 shadow-xl md:p-8">
+          <div className="flex h-full flex-col">
 
-            <div className="mb-8 flex items-center justify-between">
+            {/* HEADER */}
+            <div className="flex items-center justify-between border-b border-gray-200 p-6">
 
-              <h3 className="text-2xl font-black md:text-4xl">
-
+              <h3 className="text-4xl font-black">
                 Carrito
-
               </h3>
 
-              <span className="text-2xl font-black md:text-3xl">
-
-                Q{total}
-
-              </span>
+              <button
+                onClick={() =>
+                  setCarritoAbierto(false)
+                }
+                className="text-4xl text-gray-500 transition hover:text-black"
+              >
+                ×
+              </button>
 
             </div>
 
-            {carrito.length === 0 ? (
+            {/* CONTENIDO */}
+            <div className="flex-1 overflow-y-auto p-6">
 
-              <p className="text-gray-500">
-                Tu carrito está vacío
-              </p>
+              {carrito.length === 0 ? (
 
-            ) : (
+                <div className="flex h-full flex-col items-center justify-center text-center">
 
-              <div className="space-y-4">
+                  <div className="mb-6 text-7xl">
+                    Bolsa
+                  </div>
 
-                {carrito.map((producto, index) => (
+                  <h4 className="mb-2 text-2xl font-bold">
 
-                  <div
-                    key={index}
-                    className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[#fafafa] p-5 md:flex-row md:items-center md:justify-between"
-                  >
+                    Tu carrito está vacío
 
-                    <div>
+                  </h4>
 
-                      <h4 className="text-lg font-bold">
+                  <p className="max-w-xs text-gray-500">
 
-                        {producto.nombre}
+                    Agrega productos para verlos aquí.
 
-                      </h4>
+                  </p>
 
-                      <p className="text-gray-500">
+                </div>
 
-                        Q{producto.precio}
+              ) : (
 
-                      </p>
+                <div className="space-y-5">
+
+                  {carrito.map((producto, index) => (
+
+                    <div
+                      key={index}
+                      className="rounded-3xl border border-gray-200 p-5"
+                    >
+
+                      <div className="flex items-center gap-4">
+
+                        <img
+                          src={producto.imagen}
+                          alt={producto.nombre}
+                          className="h-24 w-24 rounded-2xl object-cover"
+                        />
+
+                        <div className="flex-1">
+
+                          <h4 className="font-bold">
+
+                            {producto.nombre}
+
+                          </h4>
+
+                          <p className="mt-1 text-gray-500">
+
+                            Q{producto.precio}
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          eliminarProducto(index)
+                        }
+                        className="mt-4 text-sm font-semibold text-red-500"
+                      >
+                        Eliminar
+                      </button>
 
                     </div>
 
-                    <button
-                      onClick={() =>
-                        eliminarProducto(index)
-                      }
-                      className="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
-                    >
-                      Eliminar
-                    </button>
+                  ))}
 
-                  </div>
+                </div>
 
-                ))}
+              )}
 
-                <button
-                  onClick={finalizarPedido}
-                  className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
-                >
-                  Finalizar Pedido
-                </button>
+            </div>
+
+            {/* FOOTER */}
+            <div className="border-t border-gray-200 p-6">
+
+              <div className="mb-5 flex items-center justify-between">
+
+                <span className="text-2xl font-bold">
+
+                  Total
+
+                </span>
+
+                <span className="text-3xl font-black">
+
+                  Q{total}
+
+                </span>
 
               </div>
 
-            )}
+              <button
+                onClick={finalizarPedido}
+                className="w-full rounded-2xl bg-black p-4 text-lg font-semibold text-white transition hover:bg-gray-800"
+              >
+                Finalizar Pedido
+              </button>
+
+            </div>
 
           </div>
 
@@ -411,19 +465,19 @@ export default function Home() {
       {/* CATALOGO */}
       <section
         id="catalogo"
-        className="mx-auto max-w-7xl px-4 pb-24 md:px-6"
+        className="mx-auto max-w-[1400px] px-6 pb-28"
       >
 
         {/* TITULO */}
-        <div className="mb-14 text-center">
+        <div className="mb-16 text-center">
 
-          <p className="mb-3 text-sm tracking-[6px] text-[#b68b4c]">
+          <p className="mb-4 text-sm tracking-[10px] text-[#b68b4c]">
 
             CATÁLOGO
 
           </p>
 
-          <h2 className="text-4xl font-black md:text-5xl">
+          <h2 className="text-5xl font-black">
 
             Productos Destacados
 
@@ -432,7 +486,7 @@ export default function Home() {
         </div>
 
         {/* FILTROS */}
-        <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="mb-14 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
           <input
             type="text"
@@ -441,10 +495,10 @@ export default function Home() {
             onChange={(e) =>
               setBusqueda(e.target.value)
             }
-            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none md:max-w-sm"
+            className="w-full max-w-md rounded-full border border-gray-300 bg-white px-6 py-4 outline-none"
           />
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
 
             {[
               "todos",
@@ -456,7 +510,7 @@ export default function Home() {
               <button
                 key={item}
                 onClick={() => setCategoria(item)}
-                className={`rounded-full px-5 py-2 capitalize transition-all duration-300 ${
+                className={`rounded-full px-6 py-3 capitalize transition ${
                   categoria === item
                     ? "bg-black text-white"
                     : "border border-gray-300 bg-white hover:bg-black hover:text-white"
@@ -472,7 +526,7 @@ export default function Home() {
         </div>
 
         {/* PRODUCTOS */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
           {loading ? (
 
@@ -480,26 +534,18 @@ export default function Home() {
 
               <div
                 key={index}
-                className="animate-pulse overflow-hidden rounded-[28px] bg-white shadow-lg"
+                className="animate-pulse overflow-hidden rounded-[32px] bg-white shadow-md"
               >
 
-                <div className="h-[240px] bg-gray-200" />
+                <div className="h-[320px] bg-gray-200" />
 
-                <div className="space-y-4 p-5">
+                <div className="space-y-4 p-6">
 
                   <div className="h-6 rounded bg-gray-200" />
 
                   <div className="h-4 rounded bg-gray-200" />
 
                   <div className="h-4 w-2/3 rounded bg-gray-200" />
-
-                  <div className="mt-6 flex items-center justify-between">
-
-                    <div className="h-6 w-20 rounded bg-gray-200" />
-
-                    <div className="h-10 w-24 rounded-full bg-gray-200" />
-
-                  </div>
 
                 </div>
 
@@ -513,18 +559,18 @@ export default function Home() {
 
               <div
                 key={producto.id}
-                className="overflow-hidden rounded-[28px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                className="overflow-hidden rounded-[32px] bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
 
                 <img
                   src={producto.imagen}
                   alt={producto.nombre}
-                  className="h-[240px] w-full object-cover md:h-[320px]"
+                  className="h-[320px] w-full object-cover"
                 />
 
-                <div className="p-5">
+                <div className="p-6">
 
-                  <h3 className="mb-2 text-xl font-black md:text-2xl">
+                  <h3 className="mb-2 text-2xl font-black">
 
                     {producto.nombre}
 
@@ -536,9 +582,9 @@ export default function Home() {
 
                   </p>
 
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center justify-between">
 
-                    <span className="text-2xl font-black">
+                    <span className="text-3xl font-black">
 
                       Q{producto.precio}
 
@@ -548,7 +594,7 @@ export default function Home() {
                       onClick={() =>
                         agregarCarrito(producto)
                       }
-                      className="rounded-full bg-black px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
+                      className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
                     >
                       Comprar
                     </button>
@@ -570,10 +616,10 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 md:grid-cols-3 md:px-6"
+        className="mx-auto grid max-w-[1400px] gap-8 px-6 pb-28 md:grid-cols-3"
       >
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="rounded-[32px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -590,7 +636,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="rounded-[32px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -606,7 +652,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+        <div className="rounded-[32px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -625,14 +671,14 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-800 bg-black text-white">
+      <footer className="bg-black text-white">
 
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-3 md:px-6">
+        <div className="mx-auto grid max-w-[1400px] gap-12 px-6 py-16 md:grid-cols-3">
 
           {/* BRAND */}
           <div>
 
-            <h2 className="mb-4 text-3xl font-black">
+            <h2 className="mb-5 text-4xl font-black">
 
               Glam Gems
 
@@ -641,7 +687,7 @@ export default function Home() {
             <p className="max-w-sm leading-relaxed text-gray-400">
 
               Joyas elegantes y accesorios diseñados
-              para elevar tu estilo en cualquier ocasión.
+              para elevar tu estilo.
 
             </p>
 
@@ -650,32 +696,23 @@ export default function Home() {
           {/* LINKS */}
           <div>
 
-            <h3 className="mb-4 text-xl font-bold">
+            <h3 className="mb-5 text-2xl font-bold">
 
               Navegación
 
             </h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
+            <div className="flex flex-col gap-4 text-gray-400">
 
-              <a
-                href="#inicio"
-                className="transition hover:text-white"
-              >
+              <a href="#inicio">
                 Inicio
               </a>
 
-              <a
-                href="#catalogo"
-                className="transition hover:text-white"
-              >
+              <a href="#catalogo">
                 Catálogo
               </a>
 
-              <a
-                href="#beneficios"
-                className="transition hover:text-white"
-              >
+              <a href="#beneficios">
                 Beneficios
               </a>
 
@@ -686,19 +723,18 @@ export default function Home() {
           {/* CONTACTO */}
           <div>
 
-            <h3 className="mb-4 text-xl font-bold">
+            <h3 className="mb-5 text-2xl font-bold">
 
               Contacto
 
             </h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
+            <div className="flex flex-col gap-4 text-gray-400">
 
               <a
                 href="https://wa.me/50252914227"
                 target="_blank"
                 rel="noreferrer"
-                className="transition hover:text-white"
               >
                 WhatsApp
               </a>
@@ -713,7 +749,6 @@ export default function Home() {
 
         </div>
 
-        {/* COPYRIGHT */}
         <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
 
           © 2026 Glam Gems. Todos los derechos reservados.
@@ -727,6 +762,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
