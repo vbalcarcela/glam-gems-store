@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
+
 import { db } from "../firebase";
 
 export default function Home() {
@@ -118,6 +123,55 @@ export default function Home() {
     (acc, item) => acc + item.precio,
     0
   );
+
+  // FINALIZAR PEDIDO
+  const finalizarPedido = async () => {
+
+    if (carrito.length === 0) return;
+
+    try {
+
+      await addDoc(
+        collection(db, "ordenes"),
+        {
+
+          productos: carrito,
+
+          total,
+
+          fecha: new Date(),
+
+          estado: "pendiente",
+
+        }
+      );
+
+      window.open(
+        `https://wa.me/50252914227?text=${encodeURIComponent(
+          carrito
+            .map(
+              (item) =>
+                `${item.nombre} - Q${item.precio}`
+            )
+            .join("\n")
+        )}`
+      );
+
+      setCarrito([]);
+
+      localStorage.removeItem("carrito");
+
+      alert("Pedido enviado");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Error al guardar pedido");
+
+    }
+
+  };
 
   return (
 
@@ -425,23 +479,17 @@ export default function Home() {
 
             </div>
 
-            <motion.a
+            <motion.button
               whileHover={{ scale: 1.03 }}
+
               whileTap={{ scale: 0.97 }}
-              href={`https://wa.me/50252914227?text=${encodeURIComponent(
-                carrito
-                  .map(
-                    (item) =>
-                      `${item.nombre} - Q${item.precio}`
-                  )
-                  .join("\n")
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="block rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
+
+              onClick={finalizarPedido}
+
+              className="block w-full rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
             >
               Finalizar Pedido
-            </motion.a>
+            </motion.button>
 
           </div>
 
