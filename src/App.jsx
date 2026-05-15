@@ -7,17 +7,6 @@ export default function App() {
   const [categoriaActiva, setCategoriaActiva] = useState("Todos");
 
   useEffect(() => {
-    const categorias = [
-  "Todos",
-  ...new Set(productos.map((p) => p.categoria)),
-];
-
-const productosFiltrados =
-  categoriaActiva === "Todos"
-    ? productos
-    : productos.filter(
-        (producto) => producto.categoria === categoriaActiva
-      );
     const obtenerProductos = async () => {
       const querySnapshot = await getDocs(collection(db, "productos"));
 
@@ -32,22 +21,34 @@ const productosFiltrados =
     obtenerProductos();
   }, []);
 
+  const categorias = [
+    "Todos",
+    ...new Set(productos.map((p) => p.categoria)),
+  ];
+
+  const productosFiltrados =
+    categoriaActiva === "Todos"
+      ? productos
+      : productos.filter(
+          (producto) => producto.categoria === categoriaActiva
+        );
+
   return (
-    <div className="min-h-screen bg-[#f8f5f2] text-black overflow-x-hidden">
-      
+    <div className="min-h-screen overflow-x-hidden bg-[#f8f5f2] text-black">
+
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 z-50 w-full border-b border-gray-200 bg-[#f8f5f2]/90 backdrop-blur-md">
-        
+
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          
+
           {/* LOGO */}
           <h1 className="text-3xl font-bold tracking-wide">
             Glam Gems
           </h1>
 
           {/* MENU */}
-          <div className="hidden md:flex items-center gap-10 text-sm font-medium">
-            
+          <div className="hidden items-center gap-10 text-sm font-medium md:flex">
+
             <a
               href="#inicio"
               className="transition hover:text-gray-500"
@@ -88,7 +89,7 @@ const productosFiltrados =
       {/* HERO */}
       <section
         id="inicio"
-        className="px-6 pt-44 pb-40"
+        className="px-6 pb-40 pt-44"
       >
 
         <div className="mx-auto grid max-w-7xl items-center gap-24 lg:grid-cols-2">
@@ -143,7 +144,7 @@ const productosFiltrados =
         <div className="mx-auto max-w-7xl">
 
           {/* TITULO */}
-          <div className="mb-24 text-center">
+          <div className="mb-20 text-center">
 
             <p className="mb-4 text-sm uppercase tracking-[6px] text-gray-500">
               Catálogo
@@ -155,34 +156,35 @@ const productosFiltrados =
 
           </div>
 
-          {/* GRID */}
           {/* FILTROS */}
-<div className="mb-16 flex flex-wrap justify-center gap-4">
+          <div className="mb-20 flex flex-wrap justify-center gap-4">
 
-  {categorias.map((categoria) => (
+            {categorias.map((categoria) => (
 
-    <button
-      key={categoria}
-      onClick={() => setCategoriaActiva(categoria)}
-      className={`rounded-full px-6 py-3 text-sm font-medium transition ${
-        categoriaActiva === categoria
-          ? "bg-black text-white"
-          : "bg-white text-black hover:bg-gray-200"
-      }`}
-    >
-      {categoria}
-    </button>
+              <button
+                key={categoria}
+                onClick={() => setCategoriaActiva(categoria)}
+                className={`rounded-full px-6 py-3 text-sm font-medium transition ${
+                  categoriaActiva === categoria
+                    ? "bg-black text-white"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
+              >
+                {categoria}
+              </button>
 
-  ))}
+            ))}
 
-</div>
+          </div>
+
+          {/* GRID */}
           <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
 
             {productosFiltrados.map((producto) => (
 
               <div
                 key={producto.id}
-                className="overflow-hidden rounded-[30px] bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                className="flex h-full flex-col overflow-hidden rounded-[30px] bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
               >
 
                 {/* IMAGEN */}
@@ -197,7 +199,7 @@ const productosFiltrados =
                 />
 
                 {/* CONTENIDO */}
-                <div className="p-8 pb-10">
+                <div className="flex h-full flex-col p-8 pb-10">
 
                   {/* NOMBRE */}
                   <h3 className="mb-3 text-2xl font-semibold">
@@ -211,7 +213,7 @@ const productosFiltrados =
                   </p>
 
                   {/* PRECIO + BOTON */}
-                  <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-6">
+                  <div className="mt-auto flex flex-col gap-4 border-t border-gray-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
 
                     <span className="text-3xl font-bold">
                       Q{producto.precio}
@@ -223,7 +225,7 @@ const productosFiltrados =
                       )}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-shrink-0 rounded-full bg-black px-5 py-3 text-sm text-white transition hover:bg-gray-800"
+                      className="w-full rounded-full bg-black px-5 py-3 text-center text-sm text-white transition hover:bg-gray-800 sm:w-auto"
                     >
                       Comprar
                     </a>
