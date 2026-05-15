@@ -12,6 +12,9 @@ export default function Home() {
   // CATEGORÍA
   const [categoriaActiva, setCategoriaActiva] = useState("Todos");
 
+  // BÚSQUEDA
+  const [busqueda, setBusqueda] = useState("");
+
   // CARRITO
   const [carrito, setCarrito] = useState(() => {
 
@@ -68,14 +71,29 @@ export default function Home() {
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
-  // FILTRO
-  const productosFiltrados =
-    categoriaActiva === "Todos"
-      ? productos
-      : productos.filter(
-          (producto) =>
-            producto.categoria === categoriaActiva
-        );
+  // FILTRO PRODUCTOS
+  const productosFiltrados = productos.filter(
+    (producto) => {
+
+      const coincideCategoria =
+        categoriaActiva === "Todos"
+          ? true
+          : producto.categoria === categoriaActiva;
+
+      const coincideBusqueda =
+        producto.nombre
+          .toLowerCase()
+          .includes(
+            busqueda.toLowerCase()
+          );
+
+      return (
+        coincideCategoria &&
+        coincideBusqueda
+      );
+
+    }
+  );
 
   // AGREGAR AL CARRITO
   const agregarAlCarrito = (producto) => {
@@ -84,7 +102,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR
+  // ELIMINAR DEL CARRITO
   const eliminarDelCarrito = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -451,6 +469,21 @@ export default function Home() {
             Productos Destacados
 
           </h2>
+
+        </div>
+
+        {/* BUSCADOR */}
+        <div className="mb-10 flex justify-center">
+
+          <input
+            type="text"
+            placeholder="Buscar productos..."
+            value={busqueda}
+            onChange={(e) =>
+              setBusqueda(e.target.value)
+            }
+            className="w-full max-w-xl rounded-full border border-gray-300 bg-white px-6 py-4 outline-none transition focus:border-black"
+          />
 
         </div>
 
