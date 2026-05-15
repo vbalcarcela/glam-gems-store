@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import { collection, getDocs } from "firebase/firestore";
-
 import { db } from "../firebase";
 
 export default function Home() {
@@ -15,24 +13,46 @@ export default function Home() {
   // CARRITO
   const [carrito, setCarrito] = useState(() => {
 
-  const carritoGuardado =
-    localStorage.getItem("carrito");
+    const carritoGuardado =
+      localStorage.getItem("carrito");
 
-  return carritoGuardado
-    ? JSON.parse(carritoGuardado)
-    : [];
+    return carritoGuardado
+      ? JSON.parse(carritoGuardado)
+      : [];
 
-});
+  });
 
   // OBTENER PRODUCTOS
   useEffect(() => {
 
-  localStorage.setItem(
-    "carrito",
-    JSON.stringify(carrito)
-  );
+    const obtenerProductos = async () => {
 
-}, [carrito]);
+      const querySnapshot = await getDocs(
+        collection(db, "productos")
+      );
+
+      const productosFirebase = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setProductos(productosFirebase);
+
+    };
+
+    obtenerProductos();
+
+  }, []);
+
+  // GUARDAR CARRITO
+  useEffect(() => {
+
+    localStorage.setItem(
+      "carrito",
+      JSON.stringify(carrito)
+    );
+
+  }, [carrito]);
 
   // CATEGORÍAS
   const categorias = [
@@ -40,7 +60,7 @@ export default function Home() {
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
-  // FILTRO
+  // FILTRAR PRODUCTOS
   const productosFiltrados =
     categoriaActiva === "Todos"
       ? productos
@@ -56,7 +76,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR DEL CARRITO
+  // ELIMINAR
   const eliminarDelCarrito = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -80,33 +100,33 @@ export default function Home() {
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 z-50 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
           {/* LOGO */}
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-3xl font-bold">
             Glam Gems
           </h1>
 
-          {/* MENU */}
-          <div className="hidden items-center gap-8 md:flex">
+          {/* LINKS */}
+          <div className="hidden items-center gap-10 md:flex">
 
             <a
               href="#inicio"
-              className="text-sm hover:text-gray-500"
+              className="transition hover:text-gray-500"
             >
               Inicio
             </a>
 
             <a
               href="#catalogo"
-              className="text-sm hover:text-gray-500"
+              className="transition hover:text-gray-500"
             >
               Catálogo
             </a>
 
             <a
               href="#beneficios"
-              className="text-sm hover:text-gray-500"
+              className="transition hover:text-gray-500"
             >
               Beneficios
             </a>
@@ -116,17 +136,19 @@ export default function Home() {
           {/* DERECHA */}
           <div className="flex items-center gap-4">
 
-            {/* CARRITO */}
+            {/* CARRITO ICON */}
             <div className="rounded-full bg-white px-5 py-2 shadow-sm">
 
               🛒 {carrito.length}
 
             </div>
 
-            {/* WHATSAPP */}
+            {/* BOTÓN */}
             <a
               href="https://wa.me/50252914227"
-              className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
             >
               WhatsApp
             </a>
@@ -140,27 +162,31 @@ export default function Home() {
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-16 px-6 pb-20 pt-36 lg:grid-cols-2"
+        className="mx-auto grid max-w-7xl items-center gap-24 px-6 py-32 lg:grid-cols-2"
       >
 
         {/* TEXTO */}
         <div>
 
-          <p className="mb-4 text-xs uppercase tracking-[5px] text-[#b08b57]">
+          <p className="mb-4 text-sm uppercase tracking-[6px] text-[#b08b57]">
             Glam Gems
           </p>
 
-          <h1 className="mb-6 text-5xl font-bold leading-tight lg:text-6xl">
+          <h1 className="mb-8 text-6xl font-bold leading-tight">
+
             Joyas que elevan tu estilo
+
           </h1>
 
-          <p className="mb-8 max-w-lg text-lg leading-relaxed text-gray-600">
+          <p className="mb-10 max-w-xl text-xl leading-relaxed text-gray-600">
+
             Accesorios elegantes y regalos especiales para cada ocasión.
+
           </p>
 
           <a
             href="#catalogo"
-            className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
+            className="rounded-full bg-black px-8 py-4 text-lg text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
           </a>
@@ -173,7 +199,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="Joyas"
-            className="h-[500px] w-full max-w-[500px] rounded-[30px] object-cover shadow-xl"
+            className="h-[600px] w-full max-w-[550px] rounded-[32px] object-cover shadow-2xl"
           />
 
         </div>
@@ -181,47 +207,57 @@ export default function Home() {
       </section>
 
       {/* CARRITO */}
-      <div className="mx-auto mb-20 max-w-7xl px-6">
+      <section className="mx-auto mb-32 max-w-7xl px-6">
 
-        <div className="rounded-[24px] bg-white p-8 shadow-sm">
+        <div className="rounded-[28px] bg-white p-8 shadow-md">
 
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-4xl font-bold">
+
               Carrito
+
             </h2>
 
-            <span className="text-xl font-semibold">
+            <span className="text-2xl font-semibold">
+
               Total: Q{total}
+
             </span>
 
           </div>
 
           {carrito.length === 0 ? (
 
-            <p className="text-gray-500">
+            <p className="text-lg text-gray-500">
+
               Tu carrito está vacío
+
             </p>
 
           ) : (
 
-            <div className="space-y-4">
+            <div className="space-y-5">
 
               {carrito.map((item, index) => (
 
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-2xl border p-4"
+                  className="flex items-center justify-between rounded-2xl border border-gray-200 p-5"
                 >
 
                   <div>
 
-                    <h3 className="font-semibold">
+                    <h3 className="text-xl font-semibold">
+
                       {item.nombre}
+
                     </h3>
 
-                    <p className="text-gray-500">
+                    <p className="mt-1 text-gray-500">
+
                       Q{item.precio}
+
                     </p>
 
                   </div>
@@ -230,7 +266,7 @@ export default function Home() {
                     onClick={() =>
                       eliminarDelCarrito(index)
                     }
-                    className="text-red-500"
+                    className="text-red-500 transition hover:text-red-700"
                   >
                     Eliminar
                   </button>
@@ -251,7 +287,7 @@ export default function Home() {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="block rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
+                className="block rounded-2xl bg-black p-5 text-center text-lg text-white transition hover:bg-gray-800"
               >
                 Finalizar Pedido
               </a>
@@ -262,29 +298,33 @@ export default function Home() {
 
         </div>
 
-      </div>
+      </section>
 
       {/* PRODUCTOS */}
       <section
         id="catalogo"
-        className="mx-auto max-w-7xl px-6 py-20"
+        className="mx-auto max-w-7xl px-6 py-32"
       >
 
         {/* TITULO */}
-        <div className="mb-14 text-center">
+        <div className="mb-16 text-center">
 
-          <p className="mb-3 text-xs uppercase tracking-[5px] text-[#b08b57]">
+          <p className="mb-4 text-sm uppercase tracking-[6px] text-[#b08b57]">
+
             Catálogo
+
           </p>
 
-          <h2 className="text-5xl font-bold">
+          <h2 className="text-6xl font-bold">
+
             Productos Destacados
+
           </h2>
 
         </div>
 
         {/* FILTROS */}
-        <div className="mb-14 flex flex-wrap justify-center gap-3">
+        <div className="mb-16 flex flex-wrap justify-center gap-4">
 
           {categorias.map((categoria) => (
 
@@ -293,10 +333,10 @@ export default function Home() {
               onClick={() =>
                 setCategoriaActiva(categoria)
               }
-              className={`rounded-full px-5 py-2 text-sm transition ${
+              className={`rounded-full px-6 py-3 transition ${
                 categoriaActiva === categoria
                   ? "bg-black text-white"
-                  : "bg-white hover:bg-gray-100"
+                  : "bg-white shadow-sm hover:bg-gray-100"
               }`}
             >
               {categoria}
@@ -307,50 +347,56 @@ export default function Home() {
         </div>
 
         {/* GRID */}
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-12 md:grid-cols-2 xl:grid-cols-3">
 
           {productosFiltrados.map((producto) => (
 
             <div
               key={producto.id}
-              className="overflow-hidden rounded-[24px] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              className="overflow-hidden rounded-[28px] bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
 
               {/* IMAGEN */}
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                className="h-[320px] w-full object-cover"
+                className="h-[360px] w-full object-cover"
               />
 
               {/* INFO */}
-              <div className="space-y-5 p-6">
+              <div className="space-y-6 p-7">
 
                 <div>
 
-                  <h3 className="mb-2 text-2xl font-semibold">
+                  <h3 className="mb-3 text-3xl font-semibold">
+
                     {producto.nombre}
+
                   </h3>
 
-                  <p className="text-gray-500">
+                  <p className="leading-relaxed text-gray-500">
+
                     {producto.descripcion ||
                       "Joya elegante y sofisticada"}
+
                   </p>
 
                 </div>
 
-                {/* FOOTER CARD */}
+                {/* FOOTER */}
                 <div className="flex items-center justify-between">
 
-                  <span className="text-3xl font-bold">
+                  <span className="text-4xl font-bold">
+
                     Q{producto.precio}
+
                   </span>
 
                   <button
                     onClick={() =>
                       agregarAlCarrito(producto)
                     }
-                    className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
+                    className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
                   >
                     Agregar
                   </button>
@@ -370,46 +416,58 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="bg-white py-20"
+        className="bg-white py-32"
       >
 
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-12 px-6 md:grid-cols-3">
 
           {/* ITEM */}
-          <div className="rounded-[24px] bg-[#f7f4ef] p-8">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
 
-            <h3 className="mb-4 text-2xl font-semibold">
+            <h3 className="mb-5 text-3xl font-semibold">
+
               Calidad Premium
+
             </h3>
 
             <p className="leading-relaxed text-gray-600">
+
               Joyas seleccionadas cuidadosamente para resaltar tu estilo.
+
             </p>
 
           </div>
 
           {/* ITEM */}
-          <div className="rounded-[24px] bg-[#f7f4ef] p-8">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
 
-            <h3 className="mb-4 text-2xl font-semibold">
+            <h3 className="mb-5 text-3xl font-semibold">
+
               Envíos
+
             </h3>
 
             <p className="leading-relaxed text-gray-600">
+
               Entregas rápidas y seguras.
+
             </p>
 
           </div>
 
           {/* ITEM */}
-          <div className="rounded-[24px] bg-[#f7f4ef] p-8">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
 
-            <h3 className="mb-4 text-2xl font-semibold">
+            <h3 className="mb-5 text-3xl font-semibold">
+
               Atención Personalizada
+
             </h3>
 
             <p className="leading-relaxed text-gray-600">
+
               Te ayudamos a elegir el regalo perfecto.
+
             </p>
 
           </div>
@@ -419,18 +477,24 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-black py-14 text-center text-white">
+      <footer className="mt-24 bg-black py-20 text-center text-white">
 
-        <h2 className="mb-3 text-4xl font-bold">
+        <h2 className="mb-4 text-5xl font-bold">
+
           Glam Gems
+
         </h2>
 
-        <p className="mb-4 text-gray-400">
+        <p className="mb-4 text-lg text-gray-400">
+
           Joyas y regalos especiales
+
         </p>
 
         <p className="text-sm text-gray-500">
+
           © 2026 Glam Gems
+
         </p>
 
       </footer>
@@ -439,4 +503,5 @@ export default function Home() {
 
   );
 }
+
 
