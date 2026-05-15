@@ -166,7 +166,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
 
             {/* CARRITO */}
-            <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold">
+            <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold transition hover:bg-black hover:text-white">
 
               {carrito.length}
 
@@ -177,7 +177,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800 md:block"
+              className="hidden rounded-full bg-black px-5 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800 md:block"
             >
               WhatsApp
             </a>
@@ -187,7 +187,7 @@ export default function Home() {
               onClick={() =>
                 setMenuAbierto(!menuAbierto)
               }
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-black md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-black transition hover:bg-black hover:text-white md:hidden"
             >
               ☰
             </button>
@@ -236,7 +236,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-black px-5 py-3 text-center text-white"
+              className="rounded-full bg-black px-5 py-3 text-center text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
             >
               WhatsApp
             </a>
@@ -277,7 +277,7 @@ export default function Home() {
 
           <a
             href="#catalogo"
-            className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
+            className="inline-block rounded-full bg-black px-8 py-4 text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
           >
             Ver Catálogo
           </a>
@@ -366,7 +366,7 @@ export default function Home() {
 
               <button
                 onClick={finalizarPedido}
-                className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition hover:bg-gray-800"
+                className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
               >
                 Finalizar Pedido
               </button>
@@ -412,7 +412,7 @@ export default function Home() {
             onChange={(e) =>
               setBusqueda(e.target.value)
             }
-            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none md:max-w-md"
+            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none"
           />
 
           <div className="flex flex-wrap gap-3">
@@ -427,10 +427,10 @@ export default function Home() {
               <button
                 key={item}
                 onClick={() => setCategoria(item)}
-                className={`rounded-full px-5 py-2 capitalize transition ${
+                className={`rounded-full px-5 py-2 capitalize transition-all duration-300 ${
                   categoria === item
                     ? "bg-black text-white"
-                    : "border border-gray-300 bg-white"
+                    : "border border-gray-300 bg-white hover:bg-black hover:text-white"
                 }`}
               >
                 {item}
@@ -449,7 +449,7 @@ export default function Home() {
 
             <div
               key={producto.id}
-              className="overflow-hidden rounded-[28px] bg-white shadow-lg transition duration-300 hover:-translate-y-2"
+              className="overflow-hidden rounded-[28px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
 
               <img
@@ -484,7 +484,7 @@ export default function Home() {
                     onClick={() =>
                       agregarCarrito(producto)
                     }
-                    className="rounded-full bg-black px-4 py-2 text-sm text-white transition hover:bg-gray-800"
+                    className="rounded-full bg-black px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
                   >
                     Comprar
                   </button>
@@ -507,7 +507,7 @@ export default function Home() {
         className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 md:grid-cols-3 md:px-6"
       >
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -524,7 +524,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -540,7 +540,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[28px] bg-white p-8 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -563,6 +563,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
