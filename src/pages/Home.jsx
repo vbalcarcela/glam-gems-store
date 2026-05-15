@@ -1,72 +1,137 @@
 import { useEffect, useState } from "react";
+
 import { collection, getDocs } from "firebase/firestore";
+
 import { db } from "../firebase";
 
 export default function Home() {
+
+  // PRODUCTOS
   const [productos, setProductos] = useState([]);
+
+  // CATEGORÍA
   const [categoriaActiva, setCategoriaActiva] = useState("Todos");
 
+  // CARRITO
+  const [carrito, setCarrito] = useState(() => {
+
+  const carritoGuardado =
+    localStorage.getItem("carrito");
+
+  return carritoGuardado
+    ? JSON.parse(carritoGuardado)
+    : [];
+
+});
+
+  // OBTENER PRODUCTOS
   useEffect(() => {
-    const obtenerProductos = async () => {
-      const querySnapshot = await getDocs(collection(db, "productos"));
 
-      const productosFirebase = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  localStorage.setItem(
+    "carrito",
+    JSON.stringify(carrito)
+  );
 
-      setProductos(productosFirebase);
-    };
+}, [carrito]);
 
-    obtenerProductos();
-  }, []);
-
+  // CATEGORÍAS
   const categorias = [
     "Todos",
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
+  // FILTRO
   const productosFiltrados =
     categoriaActiva === "Todos"
       ? productos
       : productos.filter(
-          (producto) => producto.categoria === categoriaActiva
+          (producto) =>
+            producto.categoria === categoriaActiva
         );
 
+  // AGREGAR AL CARRITO
+  const agregarAlCarrito = (producto) => {
+
+    setCarrito([...carrito, producto]);
+
+  };
+
+  // ELIMINAR DEL CARRITO
+  const eliminarDelCarrito = (index) => {
+
+    const nuevoCarrito = [...carrito];
+
+    nuevoCarrito.splice(index, 1);
+
+    setCarrito(nuevoCarrito);
+
+  };
+
+  // TOTAL
+  const total = carrito.reduce(
+    (acc, item) => acc + item.precio,
+    0
+  );
+
   return (
-    <div className="bg-[#f7f4ef] text-black">
+
+    <div className="min-h-screen bg-[#f7f4ef] text-black">
 
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 z-50 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
+          {/* LOGO */}
           <h1 className="text-2xl font-bold">
             Glam Gems
           </h1>
 
+          {/* MENU */}
           <div className="hidden items-center gap-8 md:flex">
 
-            <a href="#inicio" className="text-sm hover:text-gray-500">
+            <a
+              href="#inicio"
+              className="text-sm hover:text-gray-500"
+            >
               Inicio
             </a>
 
-            <a href="#catalogo" className="text-sm hover:text-gray-500">
+            <a
+              href="#catalogo"
+              className="text-sm hover:text-gray-500"
+            >
               Catálogo
             </a>
 
-            <a href="#beneficios" className="text-sm hover:text-gray-500">
+            <a
+              href="#beneficios"
+              className="text-sm hover:text-gray-500"
+            >
               Beneficios
             </a>
 
           </div>
 
-          <a
-            href="https://wa.me/50252914227"
-            className="rounded-full bg-black px-5 py-2 text-sm text-white"
-          >
-            WhatsApp
-          </a>
+          {/* DERECHA */}
+          <div className="flex items-center gap-4">
+
+            {/* CARRITO */}
+            <div className="rounded-full bg-white px-5 py-2 shadow-sm">
+
+              🛒 {carrito.length}
+
+            </div>
+
+            {/* WHATSAPP */}
+            <a
+              href="https://wa.me/50252914227"
+              className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
+            >
+              WhatsApp
+            </a>
+
+          </div>
 
         </div>
 
@@ -75,7 +140,7 @@ export default function Home() {
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-16 px-6 pb-24 pt-36 lg:grid-cols-2"
+        className="mx-auto grid max-w-7xl items-center gap-16 px-6 pb-20 pt-36 lg:grid-cols-2"
       >
 
         {/* TEXTO */}
@@ -94,10 +159,10 @@ export default function Home() {
           </p>
 
           <a
-            href="https://wa.me/50252914227"
+            href="#catalogo"
             className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
           >
-            Comprar por WhatsApp
+            Ver Catálogo
           </a>
 
         </div>
@@ -114,6 +179,90 @@ export default function Home() {
         </div>
 
       </section>
+
+      {/* CARRITO */}
+      <div className="mx-auto mb-20 max-w-7xl px-6">
+
+        <div className="rounded-[24px] bg-white p-8 shadow-sm">
+
+          <div className="mb-6 flex items-center justify-between">
+
+            <h2 className="text-3xl font-bold">
+              Carrito
+            </h2>
+
+            <span className="text-xl font-semibold">
+              Total: Q{total}
+            </span>
+
+          </div>
+
+          {carrito.length === 0 ? (
+
+            <p className="text-gray-500">
+              Tu carrito está vacío
+            </p>
+
+          ) : (
+
+            <div className="space-y-4">
+
+              {carrito.map((item, index) => (
+
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-2xl border p-4"
+                >
+
+                  <div>
+
+                    <h3 className="font-semibold">
+                      {item.nombre}
+                    </h3>
+
+                    <p className="text-gray-500">
+                      Q{item.precio}
+                    </p>
+
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      eliminarDelCarrito(index)
+                    }
+                    className="text-red-500"
+                  >
+                    Eliminar
+                  </button>
+
+                </div>
+
+              ))}
+
+              {/* FINALIZAR */}
+              <a
+                href={`https://wa.me/50252914227?text=${encodeURIComponent(
+                  carrito
+                    .map(
+                      (item) =>
+                        `${item.nombre} - Q${item.precio}`
+                    )
+                    .join("\n")
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="block rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
+              >
+                Finalizar Pedido
+              </a>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
 
       {/* PRODUCTOS */}
       <section
@@ -141,7 +290,9 @@ export default function Home() {
 
             <button
               key={categoria}
-              onClick={() => setCategoriaActiva(categoria)}
+              onClick={() =>
+                setCategoriaActiva(categoria)
+              }
               className={`rounded-full px-5 py-2 text-sm transition ${
                 categoriaActiva === categoria
                   ? "bg-black text-white"
@@ -188,20 +339,21 @@ export default function Home() {
 
                 </div>
 
+                {/* FOOTER CARD */}
                 <div className="flex items-center justify-between">
 
                   <span className="text-3xl font-bold">
                     Q{producto.precio}
                   </span>
 
-                  <a
-                    href={`https://wa.me/50252914227?text=Hola,%20quiero%20comprar%20${encodeURIComponent(
-                      producto.nombre
-                    )}`}
-                    className="rounded-full bg-black px-5 py-2 text-sm text-white"
+                  <button
+                    onClick={() =>
+                      agregarAlCarrito(producto)
+                    }
+                    className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
                   >
-                    Comprar
-                  </a>
+                    Agregar
+                  </button>
 
                 </div>
 
@@ -223,6 +375,7 @@ export default function Home() {
 
         <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3">
 
+          {/* ITEM */}
           <div className="rounded-[24px] bg-[#f7f4ef] p-8">
 
             <h3 className="mb-4 text-2xl font-semibold">
@@ -235,6 +388,7 @@ export default function Home() {
 
           </div>
 
+          {/* ITEM */}
           <div className="rounded-[24px] bg-[#f7f4ef] p-8">
 
             <h3 className="mb-4 text-2xl font-semibold">
@@ -247,6 +401,7 @@ export default function Home() {
 
           </div>
 
+          {/* ITEM */}
           <div className="rounded-[24px] bg-[#f7f4ef] p-8">
 
             <h3 className="mb-4 text-2xl font-semibold">
@@ -281,5 +436,7 @@ export default function Home() {
       </footer>
 
     </div>
+
   );
 }
+
