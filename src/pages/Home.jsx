@@ -45,7 +45,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR
+  // ELIMINAR DEL CARRITO
   const eliminarProducto = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -58,7 +58,7 @@ export default function Home() {
 
   // TOTAL
   const total = carrito.reduce(
-    (acc, item) => acc + item.precio,
+    (acc, item) => acc + Number(item.precio),
     0
   );
 
@@ -84,7 +84,7 @@ export default function Home() {
 
       });
 
-      alert("Pedido realizado");
+      alert("Pedido realizado correctamente");
 
       setCarrito([]);
 
@@ -98,7 +98,7 @@ export default function Home() {
 
   };
 
-  // FILTRAR PRODUCTOS
+  // FILTROS
   const productosFiltrados = productos.filter((producto) => {
 
     const coincideBusqueda =
@@ -119,54 +119,57 @@ export default function Home() {
 
   return (
 
-    <div className="min-h-screen bg-[#f7f4ef] text-black">
+    <div className="min-h-screen overflow-x-hidden bg-[#f7f4ef] text-black">
 
       {/* NAVBAR */}
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-          <h1 className="text-3xl font-black">
+          <h1 className="text-2xl font-black md:text-3xl">
+
             Glam Gems
+
           </h1>
 
-          <nav className="hidden gap-10 md:flex">
+          <nav className="hidden items-center gap-10 md:flex">
 
             <a
               href="#inicio"
-              className="transition hover:text-gray-500"
+              className="font-medium transition hover:text-gray-500"
             >
               Inicio
             </a>
 
             <a
               href="#catalogo"
-              className="transition hover:text-gray-500"
+              className="font-medium transition hover:text-gray-500"
             >
               Catálogo
             </a>
 
             <a
               href="#beneficios"
-              className="transition hover:text-gray-500"
+              className="font-medium transition hover:text-gray-500"
             >
               Beneficios
             </a>
 
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
 
             <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold">
 
-              🛒 {carrito.length}
+              {carrito.length}
 
             </div>
 
             <a
-              href="https://wa.me/50200000000"
+              href="https://wa.me/50252914227"
               target="_blank"
-              className="rounded-full bg-black px-5 py-2 text-white transition hover:bg-gray-800"
+              rel="noreferrer"
+              className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
             >
               WhatsApp
             </a>
@@ -180,22 +183,25 @@ export default function Home() {
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-20 md:grid-cols-2"
+        className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2"
       >
 
+        {/* TEXTO */}
         <div>
 
-          <p className="mb-4 tracking-[8px] text-[#b68b4c]">
+          <p className="mb-4 text-sm tracking-[8px] text-[#b68b4c]">
+
             GLAM GEMS
+
           </p>
 
-          <h2 className="mb-6 text-5xl font-black leading-tight md:text-7xl">
+          <h2 className="mb-6 text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
 
             Joyas que elevan tu estilo
 
           </h2>
 
-          <p className="mb-8 max-w-xl text-xl text-gray-600">
+          <p className="mb-8 max-w-xl text-lg leading-relaxed text-gray-600 md:text-xl">
 
             Accesorios elegantes y regalos especiales
             para cada ocasión.
@@ -204,19 +210,20 @@ export default function Home() {
 
           <a
             href="#catalogo"
-            className="rounded-full bg-black px-8 py-4 text-lg text-white transition hover:bg-gray-800"
+            className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
           </a>
 
         </div>
 
+        {/* IMAGEN */}
         <div>
 
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="joyas"
-            className="h-[650px] w-full rounded-[40px] object-cover shadow-2xl"
+            className="h-[400px] w-full rounded-[30px] object-cover shadow-2xl md:h-[500px]"
           />
 
         </div>
@@ -224,25 +231,29 @@ export default function Home() {
       </section>
 
       {/* CARRITO */}
-      <section className="mx-auto mb-20 max-w-7xl px-6">
+      <section className="relative z-20 mx-auto -mt-6 mb-28 max-w-7xl px-6">
 
-        <div className="rounded-[35px] bg-white p-8 shadow-xl">
+        <div className="rounded-[28px] bg-white p-8 shadow-xl">
 
           <div className="mb-8 flex items-center justify-between">
 
-            <h3 className="text-4xl font-black">
+            <h3 className="text-3xl font-black md:text-4xl">
+
               Carrito
+
             </h3>
 
-            <span className="text-3xl font-black">
+            <span className="text-2xl font-black md:text-3xl">
+
               Q{total}
+
             </span>
 
           </div>
 
           {carrito.length === 0 ? (
 
-            <p className="text-lg text-gray-500">
+            <p className="text-gray-500">
               Tu carrito está vacío
             </p>
 
@@ -259,12 +270,16 @@ export default function Home() {
 
                   <div>
 
-                    <h4 className="text-xl font-bold">
+                    <h4 className="text-lg font-bold md:text-xl">
+
                       {producto.nombre}
+
                     </h4>
 
                     <p className="text-gray-500">
+
                       Q{producto.precio}
+
                     </p>
 
                   </div>
@@ -273,7 +288,7 @@ export default function Home() {
                     onClick={() =>
                       eliminarProducto(index)
                     }
-                    className="text-red-500 transition hover:text-red-700"
+                    className="font-semibold text-red-500 transition hover:text-red-700"
                   >
                     Eliminar
                   </button>
@@ -284,7 +299,7 @@ export default function Home() {
 
               <button
                 onClick={finalizarPedido}
-                className="mt-6 w-full rounded-2xl bg-black p-5 text-lg text-white transition hover:bg-gray-800"
+                className="mt-4 w-full rounded-2xl bg-black p-4 text-lg text-white transition hover:bg-gray-800"
               >
                 Finalizar Pedido
               </button>
@@ -303,20 +318,25 @@ export default function Home() {
         className="mx-auto max-w-7xl px-6 pb-24"
       >
 
-        <div className="mb-16 text-center">
+        {/* TITULO */}
+        <div className="mb-14 text-center">
 
-          <p className="mb-4 tracking-[8px] text-[#b68b4c]">
+          <p className="mb-3 text-sm tracking-[8px] text-[#b68b4c]">
+
             CATÁLOGO
+
           </p>
 
-          <h2 className="text-5xl font-black">
+          <h2 className="text-4xl font-black md:text-5xl">
+
             Productos Destacados
+
           </h2>
 
         </div>
 
         {/* FILTROS */}
-        <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
 
           <input
             type="text"
@@ -328,7 +348,7 @@ export default function Home() {
             className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none md:max-w-md"
           />
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
 
             {[
               "todos",
@@ -340,10 +360,10 @@ export default function Home() {
               <button
                 key={item}
                 onClick={() => setCategoria(item)}
-                className={`rounded-full px-6 py-3 capitalize transition ${
+                className={`rounded-full px-5 py-2 capitalize transition ${
                   categoria === item
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "border border-gray-300 bg-white"
                 }`}
               >
                 {item}
@@ -356,42 +376,48 @@ export default function Home() {
         </div>
 
         {/* PRODUCTOS */}
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
           {productosFiltrados.map((producto) => (
 
             <div
               key={producto.id}
-              className="overflow-hidden rounded-[35px] bg-white shadow-lg transition hover:-translate-y-2"
+              className="overflow-hidden rounded-[30px] bg-white shadow-lg transition duration-300 hover:-translate-y-2"
             >
 
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                className="h-[340px] w-full object-cover"
+                className="h-[320px] w-full object-cover"
               />
 
-              <div className="p-7">
+              <div className="p-6">
 
-                <h3 className="mb-3 text-3xl font-black">
+                <h3 className="mb-3 text-2xl font-black">
+
                   {producto.nombre}
+
                 </h3>
 
                 <p className="mb-6 text-gray-600">
+
                   {producto.descripcion}
+
                 </p>
 
                 <div className="flex items-center justify-between">
 
-                  <span className="text-3xl font-black">
+                  <span className="text-2xl font-black">
+
                     Q{producto.precio}
+
                   </span>
 
                   <button
                     onClick={() =>
                       agregarCarrito(producto)
                     }
-                    className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
+                    className="rounded-full bg-black px-5 py-3 text-white transition hover:bg-gray-800"
                   >
                     Comprar
                   </button>
@@ -414,39 +440,51 @@ export default function Home() {
         className="mx-auto grid max-w-7xl gap-8 px-6 pb-24 md:grid-cols-3"
       >
 
-        <div className="rounded-[35px] bg-white p-10 shadow-lg">
+        <div className="rounded-[30px] bg-white p-10 shadow-lg">
 
-          <h3 className="mb-4 text-3xl font-black">
+          <h3 className="mb-4 text-2xl font-black">
+
             Calidad Premium
+
           </h3>
 
-          <p className="text-gray-600">
-            Joyas seleccionadas cuidadosamente para
-            resaltar tu estilo.
+          <p className="leading-relaxed text-gray-600">
+
+            Joyas seleccionadas cuidadosamente
+            para resaltar tu estilo.
+
           </p>
 
         </div>
 
-        <div className="rounded-[35px] bg-white p-10 shadow-lg">
+        <div className="rounded-[30px] bg-white p-10 shadow-lg">
 
-          <h3 className="mb-4 text-3xl font-black">
+          <h3 className="mb-4 text-2xl font-black">
+
             Envíos
+
           </h3>
 
-          <p className="text-gray-600">
+          <p className="leading-relaxed text-gray-600">
+
             Entregas rápidas y seguras.
+
           </p>
 
         </div>
 
-        <div className="rounded-[35px] bg-white p-10 shadow-lg">
+        <div className="rounded-[30px] bg-white p-10 shadow-lg">
 
-          <h3 className="mb-4 text-3xl font-black">
+          <h3 className="mb-4 text-2xl font-black">
+
             Atención Personalizada
+
           </h3>
 
-          <p className="text-gray-600">
+          <p className="leading-relaxed text-gray-600">
+
             Te ayudamos a elegir el regalo perfecto.
+
           </p>
 
         </div>
@@ -458,3 +496,4 @@ export default function Home() {
   );
 
 }
+
