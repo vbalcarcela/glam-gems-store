@@ -22,8 +22,11 @@ export default function Home() {
 
   });
 
-  // ABRIR CARRITO
+  // CARRITO LATERAL
   const [abrirCarrito, setAbrirCarrito] = useState(false);
+
+  // MENU MOBILE
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // OBTENER PRODUCTOS
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function Home() {
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
-  // FILTRO
+  // PRODUCTOS FILTRADOS
   const productosFiltrados =
     categoriaActiva === "Todos"
       ? productos
@@ -98,19 +101,19 @@ export default function Home() {
 
   return (
 
-    <div className="min-h-screen bg-[#f7f4ef] text-black">
+    <div className="min-h-screen overflow-x-hidden bg-[#f7f4ef] text-black">
 
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 z-40 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
 
           {/* LOGO */}
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-bold md:text-3xl">
             Glam Gems
           </h1>
 
-          {/* LINKS */}
+          {/* LINKS DESKTOP */}
           <div className="hidden items-center gap-10 md:flex">
 
             <a
@@ -137,17 +140,29 @@ export default function Home() {
           </div>
 
           {/* DERECHA */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
 
             {/* CARRITO */}
             <button
               onClick={() =>
                 setAbrirCarrito(!abrirCarrito)
               }
-              className="rounded-full bg-white px-5 py-2 shadow-sm transition hover:scale-105"
+              className="rounded-full bg-white px-4 py-2 shadow-sm transition hover:scale-105"
             >
 
               🛒 {carrito.length}
+
+            </button>
+
+            {/* BOTON MOBILE */}
+            <button
+              onClick={() =>
+                setMenuAbierto(!menuAbierto)
+              }
+              className="text-3xl md:hidden"
+            >
+
+              ☰
 
             </button>
 
@@ -156,7 +171,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
+              className="hidden rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800 md:block"
             >
               WhatsApp
             </a>
@@ -167,26 +182,77 @@ export default function Home() {
 
       </nav>
 
+      {/* MENU MOBILE */}
+      {menuAbierto && (
+
+        <div className="fixed top-[76px] left-0 z-30 w-full border-b border-gray-200 bg-[#f7f4ef] p-6 md:hidden">
+
+          <div className="flex flex-col gap-6 text-lg">
+
+            <a
+              href="#inicio"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Inicio
+            </a>
+
+            <a
+              href="#catalogo"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Catálogo
+            </a>
+
+            <a
+              href="#beneficios"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Beneficios
+            </a>
+
+            <a
+              href="https://wa.me/50252914227"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-black px-6 py-3 text-center text-white"
+            >
+              WhatsApp
+            </a>
+
+          </div>
+
+        </div>
+
+      )}
+
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-24 px-6 py-32 lg:grid-cols-2"
+        className="mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-32 md:px-6 lg:grid-cols-2 lg:gap-24 lg:py-32"
       >
 
         {/* TEXTO */}
-        <div>
+        <div className="text-center lg:text-left">
 
-          <p className="mb-4 text-sm uppercase tracking-[6px] text-[#b08b57]">
+          <p className="mb-4 text-xs uppercase tracking-[6px] text-[#b08b57] md:text-sm">
+
             Glam Gems
+
           </p>
 
-          <h1 className="mb-8 text-6xl font-bold leading-tight">
+          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
 
             Joyas que elevan tu estilo
 
           </h1>
 
-          <p className="mb-10 max-w-xl text-xl leading-relaxed text-gray-600">
+          <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-gray-600 md:text-lg lg:mx-0 lg:text-xl">
 
             Accesorios elegantes y regalos especiales para cada ocasión.
 
@@ -194,7 +260,7 @@ export default function Home() {
 
           <a
             href="#catalogo"
-            className="rounded-full bg-black px-8 py-4 text-lg text-white transition hover:bg-gray-800"
+            className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
           </a>
@@ -207,7 +273,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="Joyas"
-            className="h-[600px] w-full max-w-[550px] rounded-[32px] object-cover shadow-2xl"
+            className="h-[420px] w-full max-w-[520px] rounded-[28px] object-cover shadow-2xl md:h-[520px]"
           />
 
         </div>
@@ -216,7 +282,7 @@ export default function Home() {
 
       {/* CARRITO LATERAL */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-[380px] bg-white shadow-2xl transition-transform duration-300 ${
+        className={`fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl transition-transform duration-300 md:w-[380px] ${
           abrirCarrito
             ? "translate-x-0"
             : "translate-x-full"
@@ -228,7 +294,7 @@ export default function Home() {
           {/* HEADER */}
           <div className="flex items-center justify-between border-b p-6">
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-2xl font-bold md:text-3xl">
               Carrito
             </h2>
 
@@ -303,7 +369,7 @@ export default function Home() {
           {/* FOOTER */}
           <div className="space-y-4 border-t p-6">
 
-            <div className="flex items-center justify-between text-xl font-bold">
+            <div className="flex items-center justify-between text-lg font-bold md:text-xl">
 
               <span>Total</span>
 
@@ -336,19 +402,19 @@ export default function Home() {
       {/* PRODUCTOS */}
       <section
         id="catalogo"
-        className="mx-auto max-w-7xl px-6 py-32"
+        className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-32"
       >
 
         {/* TITULO */}
-        <div className="mb-16 text-center">
+        <div className="mb-14 text-center md:mb-16">
 
-          <p className="mb-4 text-sm uppercase tracking-[6px] text-[#b08b57]">
+          <p className="mb-4 text-xs uppercase tracking-[6px] text-[#b08b57] md:text-sm">
 
             Catálogo
 
           </p>
 
-          <h2 className="text-6xl font-bold">
+          <h2 className="text-4xl font-bold md:text-5xl lg:text-6xl">
 
             Productos Destacados
 
@@ -357,7 +423,7 @@ export default function Home() {
         </div>
 
         {/* FILTROS */}
-        <div className="mb-16 flex flex-wrap justify-center gap-4">
+        <div className="mb-14 flex flex-wrap justify-center gap-3 md:mb-16 md:gap-4">
 
           {categorias.map((categoria) => (
 
@@ -366,7 +432,7 @@ export default function Home() {
               onClick={() =>
                 setCategoriaActiva(categoria)
               }
-              className={`rounded-full px-6 py-3 transition ${
+              className={`rounded-full px-5 py-3 text-sm transition md:px-6 ${
                 categoriaActiva === categoria
                   ? "bg-black text-white"
                   : "bg-white shadow-sm hover:bg-gray-100"
@@ -380,7 +446,7 @@ export default function Home() {
         </div>
 
         {/* GRID */}
-        <div className="grid gap-12 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3 xl:gap-12">
 
           {productosFiltrados.map((producto) => (
 
@@ -393,15 +459,15 @@ export default function Home() {
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                className="h-[360px] w-full object-cover"
+                className="h-[320px] w-full object-cover md:h-[360px]"
               />
 
               {/* INFO */}
-              <div className="space-y-6 p-7">
+              <div className="space-y-5 p-6 md:space-y-6 md:p-7">
 
                 <div>
 
-                  <h3 className="mb-3 text-3xl font-semibold">
+                  <h3 className="mb-3 text-2xl font-semibold md:text-3xl">
 
                     {producto.nombre}
 
@@ -417,9 +483,9 @@ export default function Home() {
                 </div>
 
                 {/* FOOTER */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
 
-                  <span className="text-4xl font-bold">
+                  <span className="text-3xl font-bold md:text-4xl">
 
                     Q{producto.precio}
 
@@ -429,7 +495,7 @@ export default function Home() {
                     onClick={() =>
                       agregarAlCarrito(producto)
                     }
-                    className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
+                    className="rounded-full bg-black px-5 py-3 text-sm text-white transition hover:bg-gray-800 md:px-6"
                   >
                     Agregar
                   </button>
@@ -449,15 +515,15 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="bg-white py-32"
+        className="bg-white py-20 md:py-32"
       >
 
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-3 md:gap-12 md:px-6">
 
           {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
 
-            <h3 className="mb-5 text-3xl font-semibold">
+            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
 
               Calidad Premium
 
@@ -472,9 +538,9 @@ export default function Home() {
           </div>
 
           {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
 
-            <h3 className="mb-5 text-3xl font-semibold">
+            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
 
               Envíos
 
@@ -489,9 +555,9 @@ export default function Home() {
           </div>
 
           {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-10 shadow-sm">
+          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
 
-            <h3 className="mb-5 text-3xl font-semibold">
+            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
 
               Atención Personalizada
 
@@ -510,15 +576,15 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="mt-24 bg-black py-20 text-center text-white">
+      <footer className="mt-20 bg-black py-16 text-center text-white md:mt-24 md:py-20">
 
-        <h2 className="mb-4 text-5xl font-bold">
+        <h2 className="mb-4 text-4xl font-bold md:text-5xl">
 
           Glam Gems
 
         </h2>
 
-        <p className="mb-4 text-lg text-gray-400">
+        <p className="mb-4 text-base text-gray-400 md:text-lg">
 
           Joyas y regalos especiales
 
@@ -536,4 +602,3 @@ export default function Home() {
 
   );
 }
-
