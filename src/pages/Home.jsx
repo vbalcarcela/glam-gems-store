@@ -11,13 +11,23 @@ import { db } from "../firebase";
 export default function Home() {
 
   const [productos, setProductos] = useState([]);
-  const [carrito, setCarrito] = useState([]);
-  const [busqueda, setBusqueda] = useState("");
-  const [categoria, setCategoria] = useState("todos");
 
-  const [menuAbierto, setMenuAbierto] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [carritoAbierto, setCarritoAbierto] = useState(false);
+  const [carrito, setCarrito] = useState([]);
+
+  const [busqueda, setBusqueda] =
+    useState("");
+
+  const [categoria, setCategoria] =
+    useState("todos");
+
+  const [menuAbierto, setMenuAbierto] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [carritoAbierto, setCarritoAbierto] =
+    useState(false);
 
   // OBTENER PRODUCTOS
   useEffect(() => {
@@ -26,9 +36,10 @@ export default function Home() {
 
       try {
 
-        const querySnapshot = await getDocs(
-          collection(db, "productos")
-        );
+        const querySnapshot =
+          await getDocs(
+            collection(db, "productos")
+          );
 
         const productosFirebase =
           querySnapshot.docs.map((doc) => ({
@@ -57,7 +68,10 @@ export default function Home() {
   // AGREGAR CARRITO
   const agregarCarrito = (producto) => {
 
-    setCarrito([...carrito, producto]);
+    setCarrito([
+      ...carrito,
+      producto,
+    ]);
 
     setCarritoAbierto(true);
 
@@ -75,8 +89,9 @@ export default function Home() {
   };
 
   // TOTAL
-  const total = carrito.reduce(
-    (acc, item) => acc + Number(item.precio),
+  const totalCarrito = carrito.reduce(
+    (acc, item) =>
+      acc + Number(item.precio),
     0
   );
 
@@ -93,16 +108,28 @@ export default function Home() {
 
     try {
 
-      await addDoc(collection(db, "ordenes"), {
+      const nuevaOrden = {
+
+        cliente: "50252914227",
 
         productos: carrito,
-        total,
+
+        total: totalCarrito,
+
         estado: "pendiente",
+
         fecha: new Date(),
 
-      });
+      };
 
-      alert("Pedido realizado correctamente");
+      await addDoc(
+        collection(db, "ordenes"),
+        nuevaOrden
+      );
+
+      alert(
+        "Pedido realizado correctamente"
+      );
 
       setCarrito([]);
 
@@ -112,30 +139,35 @@ export default function Home() {
 
       console.log(error);
 
-      alert("Error al finalizar pedido");
+      alert(
+        "Error al finalizar pedido"
+      );
 
     }
 
   };
 
   // FILTRAR PRODUCTOS
-  const productosFiltrados = productos.filter((producto) => {
+  const productosFiltrados =
+    productos.filter((producto) => {
 
-    const coincideBusqueda =
-      producto.nombre
-        ?.toLowerCase()
-        .includes(busqueda.toLowerCase());
+      const coincideBusqueda =
+        producto.nombre
+          ?.toLowerCase()
+          .includes(
+            busqueda.toLowerCase()
+          );
 
-    const coincideCategoria =
-      categoria === "todos" ||
-      producto.categoria === categoria;
+      const coincideCategoria =
+        categoria === "todos" ||
+        producto.categoria === categoria;
 
-    return (
-      coincideBusqueda &&
-      coincideCategoria
-    );
+      return (
+        coincideBusqueda &&
+        coincideCategoria
+      );
 
-  });
+    });
 
   return (
 
@@ -182,10 +214,12 @@ export default function Home() {
           {/* DERECHA */}
           <div className="flex items-center gap-4">
 
-            {/* BOTON CARRITO */}
+            {/* CARRITO */}
             <button
               onClick={() =>
-                setCarritoAbierto(!carritoAbierto)
+                setCarritoAbierto(
+                  !carritoAbierto
+                )
               }
               className="rounded-full border border-black px-5 py-3 text-sm font-semibold transition hover:bg-black hover:text-white"
             >
@@ -207,7 +241,9 @@ export default function Home() {
             {/* MENU MOBILE */}
             <button
               onClick={() =>
-                setMenuAbierto(!menuAbierto)
+                setMenuAbierto(
+                  !menuAbierto
+                )
               }
               className="flex h-12 w-12 items-center justify-center rounded-full border border-black transition hover:bg-black hover:text-white md:hidden"
             >
@@ -393,51 +429,67 @@ export default function Home() {
 
               <div className="space-y-5">
 
-                {carrito.map((producto, index) => (
+                {carrito.map(
+                  (
+                    producto,
+                    index
+                  ) => (
 
-                  <div
-                    key={index}
-                    className="rounded-3xl border border-gray-200 p-5"
-                  >
+                    <div
+                      key={index}
+                      className="rounded-3xl border border-gray-200 p-5"
+                    >
 
-                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4">
 
-                      <img
-                        src={producto.imagen}
-                        alt={producto.nombre}
-                        className="h-24 w-24 rounded-2xl object-cover"
-                      />
+                        <img
+                          src={
+                            producto.imagen
+                          }
+                          alt={
+                            producto.nombre
+                          }
+                          className="h-24 w-24 rounded-2xl object-cover"
+                        />
 
-                      <div className="flex-1">
+                        <div className="flex-1">
 
-                        <h4 className="font-bold">
+                          <h4 className="font-bold">
 
-                          {producto.nombre}
+                            {
+                              producto.nombre
+                            }
 
-                        </h4>
+                          </h4>
 
-                        <p className="mt-1 text-gray-500">
+                          <p className="mt-1 text-gray-500">
 
-                          Q{producto.precio}
+                            Q
+                            {
+                              producto.precio
+                            }
 
-                        </p>
+                          </p>
+
+                        </div>
 
                       </div>
 
+                      <button
+                        onClick={() =>
+                          eliminarProducto(
+                            index
+                          )
+                        }
+                        className="mt-4 text-sm font-semibold text-red-500"
+                      >
+                        Eliminar
+                      </button>
+
                     </div>
 
-                    <button
-                      onClick={() =>
-                        eliminarProducto(index)
-                      }
-                      className="mt-4 text-sm font-semibold text-red-500"
-                    >
-                      Eliminar
-                    </button>
-
-                  </div>
-
-                ))}
+                  )
+                )}
 
               </div>
 
@@ -458,7 +510,7 @@ export default function Home() {
 
               <span className="text-3xl font-black">
 
-                Q{total}
+                Q{totalCarrito}
 
               </span>
 
@@ -508,7 +560,9 @@ export default function Home() {
             placeholder="Buscar productos..."
             value={busqueda}
             onChange={(e) =>
-              setBusqueda(e.target.value)
+              setBusqueda(
+                e.target.value
+              )
             }
             className="w-full max-w-md rounded-full border border-gray-300 bg-white px-6 py-4 outline-none"
           />
@@ -547,82 +601,99 @@ export default function Home() {
 
           {loading ? (
 
-            [...Array(6)].map((_, index) => (
+            [...Array(6)].map(
+              (_, index) => (
 
-              <div
-                key={index}
-                className="animate-pulse overflow-hidden rounded-[32px] bg-white shadow-lg"
-              >
+                <div
+                  key={index}
+                  className="animate-pulse overflow-hidden rounded-[32px] bg-white shadow-lg"
+                >
 
-                <div className="h-[320px] bg-gray-200" />
+                  <div className="h-[320px] bg-gray-200" />
 
-                <div className="space-y-4 p-7">
+                  <div className="space-y-4 p-7">
 
-                  <div className="h-6 rounded bg-gray-200" />
+                    <div className="h-6 rounded bg-gray-200" />
 
-                  <div className="h-4 rounded bg-gray-200" />
+                    <div className="h-4 rounded bg-gray-200" />
 
-                  <div className="h-4 w-2/3 rounded bg-gray-200" />
-
-                </div>
-
-              </div>
-
-            ))
-
-          ) : (
-
-            productosFiltrados.map((producto) => (
-
-              <div
-                key={producto.id}
-                className="overflow-hidden rounded-[32px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-              >
-
-                <img
-                  src={producto.imagen}
-                  alt={producto.nombre}
-                  className="h-[320px] w-full object-cover"
-                />
-
-                <div className="space-y-4 p-7">
-
-                  <h3 className="text-2xl font-black">
-
-                    {producto.nombre}
-
-                  </h3>
-
-                  <p className="text-gray-600">
-
-                    {producto.descripcion}
-
-                  </p>
-
-                  <div className="flex items-center justify-between">
-
-                    <span className="text-3xl font-black">
-
-                      Q{producto.precio}
-
-                    </span>
-
-                    <button
-                      onClick={() =>
-                        agregarCarrito(producto)
-                      }
-                      className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
-                    >
-                      Comprar
-                    </button>
+                    <div className="h-4 w-2/3 rounded bg-gray-200" />
 
                   </div>
 
                 </div>
 
-              </div>
+              )
+            )
 
-            ))
+          ) : (
+
+            productosFiltrados.map(
+              (producto) => (
+
+                <div
+                  key={producto.id}
+                  className="overflow-hidden rounded-[32px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                >
+
+                  <img
+                    src={
+                      producto.imagen
+                    }
+                    alt={
+                      producto.nombre
+                    }
+                    className="h-[320px] w-full object-cover"
+                  />
+
+                  <div className="space-y-4 p-7">
+
+                    <h3 className="text-2xl font-black">
+
+                      {
+                        producto.nombre
+                      }
+
+                    </h3>
+
+                    <p className="text-gray-600">
+
+                      {
+                        producto.descripcion
+                      }
+
+                    </p>
+
+                    <div className="flex items-center justify-between">
+
+                      <span className="text-3xl font-black">
+
+                        Q
+                        {
+                          producto.precio
+                        }
+
+                      </span>
+
+                      <button
+                        onClick={() =>
+                          agregarCarrito(
+                            producto
+                          )
+                        }
+                        className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
+                      >
+                        Comprar
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )
+            )
 
           )}
 
@@ -779,6 +850,7 @@ export default function Home() {
   );
 
 }
+
 
 
 

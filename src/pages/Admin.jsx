@@ -1,109 +1,84 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   collection,
-  addDoc,
   getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import {
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
   signOut,
 } from "firebase/auth";
 
-import { db, auth } from "../firebase";
+import { auth, db } from "../firebase";
+
+import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
 
-  // LOGIN
-  const [correo, setCorreo] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  // USUARIO
-  const [usuario, setUsuario] = useState(null);
+  const [productos, setProductos] = useState([]);
 
-  // PRODUCTO
+  // FORMULARIO
   const [nombre, setNombre] = useState("");
+
   const [precio, setPrecio] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+
   const [imagen, setImagen] = useState("");
+
+  const [descripcion, setDescripcion] = useState("");
+
   const [categoria, setCategoria] = useState("");
 
-  // SUBIDA
-  const [subiendo, setSubiendo] = useState(false);
+  // CLOUDINARY
+  const [subiendoImagen, setSubiendoImagen] =
+    useState(false);
 
-  // ÓRDENES
-  const [ordenes, setOrdenes] = useState([]);
+  // EDITAR
+  const [editandoId, setEditandoId] =
+    useState(null);
 
-  // VERIFICAR LOGIN
+  // OBTENER PRODUCTOS
   useEffect(() => {
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-
-      setUsuario(user);
-
-    });
-
-    return () => unsubscribe();
+    obtenerProductos();
 
   }, []);
 
-  // OBTENER ÓRDENES
-  useEffect(() => {
+  const obtenerProductos = async () => {
 
-    const obtenerOrdenes = async () => {
+    try {
 
       const querySnapshot = await getDocs(
-        collection(db, "ordenes")
+        collection(db, "productos")
       );
 
-      const ordenesFirebase =
+      const productosFirebase =
         querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
-      setOrdenes(ordenesFirebase);
-
-    };
-
-    obtenerOrdenes();
-
-  }, []);
-
-  // LOGIN
-  const iniciarSesion = async (e) => {
-
-    e.preventDefault();
-
-    try {
-
-      await signInWithEmailAndPassword(
-        auth,
-        correo,
-        password
-      );
+      setProductos(productosFirebase);
 
     } catch (error) {
 
-      alert("Credenciales incorrectas");
+      console.log(error);
 
     }
 
   };
 
-  // LOGOUT
-  const cerrarSesion = async () => {
-
-    await signOut(auth);
-
-  };
-
-  // SUBIR IMAGEN
+  // SUBIR IMAGEN CLOUDINARY
   const subirImagen = async (file) => {
 
-    setSubiendo(true);
+    if (!file) return;
+
+    setSubiendoImagen(true);
 
     const data = new FormData();
 
@@ -111,7 +86,7 @@ export default function Admin() {
 
     data.append(
       "upload_preset",
-      "mmrgqwre"
+      "umxjqir5"
     );
 
     data.append(
@@ -129,9 +104,12 @@ export default function Admin() {
         }
       );
 
-      const uploadedImage = await res.json();
+      const uploadedImage =
+        await res.json();
 
-      setImagen(uploadedImage.secure_url);
+      setImagen(
+        uploadedImage.secure_url
+      );
 
     } catch (error) {
 
@@ -139,271 +117,595 @@ export default function Admin() {
 
       alert("Error subiendo imagen");
 
-    }
+    } finally {
 
-    setSubiendo(false);
+      setSubiendoImagen(false);
+
+    }
 
   };
 
-  // AGREGAR PRODUCTO
-  const agregarProducto = async (e) => {
+  // LIMPIAR FORMULARIO
+  const limpiarFormulario = () => {
+
+    setNombre("");
+
+    setPrecio("");
+
+    setImagen("");
+
+    setDescripcion("");
+
+    setCategoria("");
+
+    setEditandoId(null);
+
+  };
+
+  // AGREGAR / EDITAR PRODUCTO
+  const guardarProducto = async (e) => {
 
     e.preventDefault();
 
+    if (
+      !nombre ||
+      !precio ||
+      !imagen ||
+      !descripcion ||
+      !categoria
+    ) {
+
+      alert("Completa todos los campos");
+
+      return;
+
+    }
+
     try {
 
-      await addDoc(collection(db, "productos"), {
+      const productoData = {
 
         nombre,
-        precio: Number(precio),
-        descripcion,
+        precio,
         imagen,
+        descripcion,
         categoria,
 
-      });
+      };
 
-      alert("Producto agregado");
+      // EDITAR
+      if (editandoId) {
 
-      // LIMPIAR
-      setNombre("");
-      setPrecio("");
-      setDescripcion("");
-      setImagen("");
-      setCategoria("");
+        await updateDoc(
+          doc(db, "productos", editandoId),
+          productoData
+        );
+
+        setProductos(
+
+          productos.map((producto) =>
+
+            producto.id === editandoId
+              ? {
+                  id: editandoId,
+                  ...productoData,
+                }
+              : producto
+
+          )
+
+        );
+
+        alert("Producto actualizado");
+
+      } else {
+
+        // CREAR
+        const docRef = await addDoc(
+          collection(db, "productos"),
+          productoData
+        );
+
+        setProductos([
+          ...productos,
+          {
+            id: docRef.id,
+            ...productoData,
+          },
+        ]);
+
+        alert("Producto agregado");
+
+      }
+
+      limpiarFormulario();
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Error al agregar producto");
+      alert("Error al guardar");
 
     }
 
   };
 
+  // EDITAR PRODUCTO
+  const editarProducto = (producto) => {
+
+    setNombre(producto.nombre);
+
+    setPrecio(producto.precio);
+
+    setImagen(producto.imagen);
+
+    setDescripcion(producto.descripcion);
+
+    setCategoria(producto.categoria);
+
+    setEditandoId(producto.id);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+  };
+
+  // ELIMINAR PRODUCTO
+  const eliminarProducto = async (id) => {
+
+    const confirmar = window.confirm(
+      "¿Eliminar producto?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+      await deleteDoc(
+        doc(db, "productos", id)
+      );
+
+      setProductos(
+        productos.filter(
+          (producto) =>
+            producto.id !== id
+        )
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Error al eliminar");
+
+    }
+
+  };
+
+  // CERRAR SESION
+  const cerrarSesion = async () => {
+
+    await signOut(auth);
+
+    navigate("/login");
+
+  };
+
   return (
 
-    <div className="min-h-screen bg-[#f7f4ef] p-4 md:p-10">
+    <div className="flex min-h-screen bg-[#f7f4ef]">
 
-      <div className="mx-auto max-w-5xl">
+      {/* SIDEBAR */}
+      <aside className="hidden w-[280px] flex-col border-r border-gray-200 bg-white p-8 lg:flex">
 
-        {!usuario ? (
+        <h1 className="mb-12 text-4xl font-black">
 
-          // LOGIN
+          Glam Gems
+
+        </h1>
+
+        <nav className="flex flex-1 flex-col gap-4">
+
+          <button className="rounded-2xl bg-black px-5 py-4 text-left text-white">
+
+            Dashboard
+
+          </button>
+
+          <button className="rounded-2xl px-5 py-4 text-left transition hover:bg-gray-100">
+
+            Productos
+
+          </button>
+
+          <button className="rounded-2xl px-5 py-4 text-left transition hover:bg-gray-100">
+
+            Órdenes
+
+          </button>
+
+          <button className="rounded-2xl px-5 py-4 text-left transition hover:bg-gray-100">
+
+            Clientes
+
+          </button>
+
+        </nav>
+
+        <button
+          onClick={cerrarSesion}
+          className="rounded-2xl bg-red-500 px-5 py-4 text-white transition hover:bg-red-600"
+        >
+          Cerrar sesión
+        </button>
+
+      </aside>
+
+      {/* CONTENT */}
+      <main className="flex-1 p-6 lg:p-10">
+
+        {/* TOP */}
+        <div className="mb-10 flex items-center justify-between">
+
+          <div>
+
+            <h2 className="text-4xl font-black">
+
+              Dashboard
+
+            </h2>
+
+            <p className="mt-2 text-gray-500">
+
+              Bienvenido al panel administrativo.
+
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* STATS */}
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+
+          <div className="rounded-[32px] bg-white p-8 shadow-lg">
+
+            <p className="mb-3 text-gray-500">
+
+              Ventas
+
+            </p>
+
+            <h3 className="text-4xl font-black">
+
+              Q0
+
+            </h3>
+
+          </div>
+
+          <div className="rounded-[32px] bg-white p-8 shadow-lg">
+
+            <p className="mb-3 text-gray-500">
+
+              Productos
+
+            </p>
+
+            <h3 className="text-4xl font-black">
+
+              {productos.length}
+
+            </h3>
+
+          </div>
+
+          <div className="rounded-[32px] bg-white p-8 shadow-lg">
+
+            <p className="mb-3 text-gray-500">
+
+              Órdenes
+
+            </p>
+
+            <h3 className="text-4xl font-black">
+
+              0
+
+            </h3>
+
+          </div>
+
+          <div className="rounded-[32px] bg-white p-8 shadow-lg">
+
+            <p className="mb-3 text-gray-500">
+
+              Clientes
+
+            </p>
+
+            <h3 className="text-4xl font-black">
+
+              0
+
+            </h3>
+
+          </div>
+
+        </div>
+
+        {/* FORMULARIO */}
+        <div className="mt-10 rounded-[32px] bg-white p-8 shadow-lg">
+
+          <div className="mb-8 flex items-center justify-between">
+
+            <h3 className="text-3xl font-black">
+
+              {editandoId
+                ? "Editar Producto"
+                : "Agregar Producto"}
+
+            </h3>
+
+            {editandoId && (
+
+              <button
+                onClick={limpiarFormulario}
+                className="rounded-2xl border border-gray-300 px-5 py-3 transition hover:bg-gray-100"
+              >
+                Cancelar
+              </button>
+
+            )}
+
+          </div>
+
           <form
-            onSubmit={iniciarSesion}
-            className="space-y-6 rounded-3xl bg-white p-8 shadow-lg md:p-10"
+            onSubmit={guardarProducto}
+            className="grid gap-5 md:grid-cols-2"
           >
 
-            <h1 className="text-3xl font-bold md:text-4xl">
-              Login Administrador
-            </h1>
-
+            {/* NOMBRE */}
             <input
-              type="email"
-              placeholder="Correo"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
+              type="text"
+              placeholder="Nombre"
+              value={nombre}
+              onChange={(e) =>
+                setNombre(e.target.value)
+              }
+              className="rounded-2xl border border-gray-300 px-5 py-4 outline-none"
             />
 
+            {/* PRECIO */}
             <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
+              type="number"
+              placeholder="Precio"
+              value={precio}
+              onChange={(e) =>
+                setPrecio(e.target.value)
+              }
+              className="rounded-2xl border border-gray-300 px-5 py-4 outline-none"
             />
 
+            {/* IMAGEN */}
+            <div className="md:col-span-2">
+
+              <label className="mb-3 block font-semibold">
+
+                Imagen del producto
+
+              </label>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  subirImagen(
+                    e.target.files[0]
+                  )
+                }
+                className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4"
+              />
+
+              {subiendoImagen && (
+
+                <p className="mt-3 text-sm text-gray-500">
+
+                  Subiendo imagen...
+
+                </p>
+
+              )}
+
+              {imagen && (
+
+                <img
+                  src={imagen}
+                  alt="preview"
+                  className="mt-5 h-40 w-40 rounded-2xl object-cover"
+                />
+
+              )}
+
+            </div>
+
+            {/* DESCRIPCION */}
+            <textarea
+              placeholder="Descripción"
+              value={descripcion}
+              onChange={(e) =>
+                setDescripcion(
+                  e.target.value
+                )
+              }
+              className="min-h-[140px] rounded-2xl border border-gray-300 px-5 py-4 outline-none md:col-span-2"
+            />
+
+            {/* CATEGORIA */}
+            <select
+              value={categoria}
+              onChange={(e) =>
+                setCategoria(
+                  e.target.value
+                )
+              }
+              className="rounded-2xl border border-gray-300 px-5 py-4 outline-none"
+            >
+
+              <option value="">
+                Categoría
+              </option>
+
+              <option value="collares">
+                Collares
+              </option>
+
+              <option value="anillos">
+                Anillos
+              </option>
+
+              <option value="aretes">
+                Aretes
+              </option>
+
+            </select>
+
+            {/* BOTON */}
             <button
               type="submit"
-              className="w-full rounded-2xl bg-black p-4 text-white transition hover:bg-gray-800"
+              className="rounded-2xl bg-black px-5 py-4 text-white transition hover:bg-gray-800"
             >
-              Iniciar Sesión
+
+              {editandoId
+                ? "Guardar Cambios"
+                : "Guardar Producto"}
+
             </button>
 
           </form>
 
-        ) : (
+        </div>
 
-          // PANEL ADMIN
-          <>
+        {/* PRODUCTOS */}
+        <div className="mt-10 rounded-[32px] bg-white p-8 shadow-lg">
 
-            {/* HEADER */}
-            <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          {/* HEADER */}
+          <div className="mb-8 flex items-center justify-between">
 
-              <h1 className="text-4xl font-bold md:text-5xl">
-                Panel Administrador
-              </h1>
+            <h3 className="text-3xl font-black">
 
-              <button
-                onClick={cerrarSesion}
-                className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
-              >
-                Cerrar Sesión
-              </button>
+              Productos
 
-            </div>
+            </h3>
 
-            {/* FORMULARIO */}
-            <form
-              onSubmit={agregarProducto}
-              className="space-y-6 rounded-3xl bg-white p-8 shadow-lg md:p-10"
-            >
+            <span className="text-gray-500">
 
-              <h2 className="text-3xl font-bold">
-                Agregar Producto
-              </h2>
+              {productos.length} productos
 
-              {/* NOMBRE */}
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
-                required
-              />
+            </span>
 
-              {/* PRECIO */}
-              <input
-                type="number"
-                placeholder="Precio"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
-                className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
-                required
-              />
+          </div>
 
-              {/* DESCRIPCIÓN */}
-              <textarea
-                placeholder="Descripción"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
-                rows="4"
-                required
-              />
+          {/* LISTA */}
+          <div className="space-y-5">
 
-              {/* IMAGEN */}
-              <div className="space-y-4">
+            {productos.length === 0 ? (
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    subirImagen(e.target.files[0])
-                  }
-                  className="w-full rounded-2xl border border-gray-300 p-4"
-                />
+              <div className="rounded-3xl border border-dashed border-gray-300 p-10 text-center">
 
-                {subiendo && (
+                <p className="text-lg text-gray-500">
 
-                  <p className="text-sm text-gray-500">
-                    Subiendo imagen...
-                  </p>
+                  No hay productos registrados.
 
-                )}
-
-                {imagen && (
-
-                  <img
-                    src={imagen}
-                    alt="preview"
-                    className="h-52 w-full rounded-2xl object-cover"
-                  />
-
-                )}
+                </p>
 
               </div>
 
-              {/* CATEGORÍA */}
-              <input
-                type="text"
-                placeholder="Categoría"
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-                className="w-full rounded-2xl border border-gray-300 p-4 outline-none"
-                required
-              />
+            ) : (
 
-              {/* BOTÓN */}
-              <button
-                type="submit"
-                className="w-full rounded-2xl bg-black p-4 text-white transition hover:bg-gray-800"
-              >
-                Agregar Producto
-              </button>
+              productos.map((producto) => (
 
-            </form>
+                <div
+                  key={producto.id}
+                  className="flex flex-col gap-5 rounded-3xl border border-gray-200 p-5 lg:flex-row lg:items-center lg:justify-between"
+                >
 
-            {/* ÓRDENES */}
-            <div className="mt-16 rounded-3xl bg-white p-8 shadow-lg md:p-10">
+                  {/* IZQUIERDA */}
+                  <div className="flex items-center gap-5">
 
-              <h2 className="mb-8 text-3xl font-bold md:text-4xl">
-                Órdenes
-              </h2>
+                    <img
+                      src={producto.imagen}
+                      alt={producto.nombre}
+                      className="h-24 w-24 rounded-2xl object-cover"
+                    />
 
-              <div className="space-y-6">
+                    <div>
 
-                {ordenes.length === 0 ? (
+                      <h4 className="text-xl font-bold">
 
-                  <p className="text-gray-500">
-                    No hay órdenes todavía
-                  </p>
+                        {producto.nombre}
 
-                ) : (
+                      </h4>
 
-                  ordenes.map((orden) => (
+                      <p className="mt-1 text-gray-500">
 
-                    <div
-                      key={orden.id}
-                      className="rounded-2xl border border-gray-200 p-6"
-                    >
+                        Q{producto.precio}
 
-                      <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                      </p>
 
-                        <span className="font-semibold capitalize">
-                          Estado: {orden.estado}
-                        </span>
+                      <p className="mt-2 max-w-md text-sm text-gray-400">
 
-                        <span className="text-lg font-bold">
-                          Q{orden.total}
-                        </span>
+                        {producto.descripcion}
 
-                      </div>
-
-                      <div className="space-y-2">
-
-                        {orden.productos?.map(
-                          (producto, index) => (
-
-                            <p key={index}>
-                              • {producto.nombre}
-                            </p>
-
-                          )
-                        )}
-
-                      </div>
+                      </p>
 
                     </div>
 
-                  ))
+                  </div>
 
-                )}
+                  {/* DERECHA */}
+                  <div className="flex gap-3">
 
-              </div>
+                    <button
+                      onClick={() =>
+                        editarProducto(producto)
+                      }
+                      className="rounded-2xl border border-gray-300 px-5 py-3 transition hover:bg-gray-100"
+                    >
+                      Editar
+                    </button>
 
-            </div>
+                    <button
+                      onClick={() =>
+                        eliminarProducto(
+                          producto.id
+                        )
+                      }
+                      className="rounded-2xl bg-red-500 px-5 py-3 text-white transition hover:bg-red-600"
+                    >
+                      Eliminar
+                    </button>
 
-          </>
+                  </div>
 
-        )}
+                </div>
 
-      </div>
+              ))
+
+            )}
+
+          </div>
+
+        </div>
+
+      </main>
 
     </div>
 
   );
+
 }
+
+
