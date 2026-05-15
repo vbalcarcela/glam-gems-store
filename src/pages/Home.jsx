@@ -231,9 +231,9 @@ export default function Home() {
       </section>
 
       {/* CARRITO */}
-      <section className="relative z-20 mx-auto -mt-6 mb-28 max-w-7xl px-6">
+      <section className="mx-auto mb-28 max-w-7xl px-6">
 
-        <div className="rounded-[28px] bg-white p-8 shadow-xl">
+        <div className="rounded-[35px] bg-white p-8 shadow-xl">
 
           <div className="mb-8 flex items-center justify-between">
 
@@ -496,4 +496,5 @@ export default function Home() {
   );
 
 }
+
 
