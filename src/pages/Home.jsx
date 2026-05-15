@@ -48,7 +48,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR DEL CARRITO
+  // ELIMINAR PRODUCTO
   const eliminarProducto = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -182,7 +182,7 @@ export default function Home() {
               WhatsApp
             </a>
 
-            {/* MENU MOBILE */}
+            {/* BOTON MENU */}
             <button
               onClick={() =>
                 setMenuAbierto(!menuAbierto)
@@ -250,7 +250,7 @@ export default function Home() {
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-6 md:py-20"
+        className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 md:grid-cols-2 md:px-6 md:py-20"
       >
 
         {/* TEXTO */}
@@ -262,13 +262,13 @@ export default function Home() {
 
           </p>
 
-          <h2 className="mb-6 text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
+          <h2 className="mb-5 text-3xl font-black leading-tight md:text-5xl lg:text-6xl">
 
             Joyas que elevan tu estilo
 
           </h2>
 
-          <p className="mb-8 max-w-xl text-base leading-relaxed text-gray-600 md:text-lg">
+          <p className="mb-7 max-w-lg text-base leading-relaxed text-gray-600 md:text-lg">
 
             Accesorios elegantes y regalos especiales
             para cada ocasión.
@@ -290,7 +290,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="joyas"
-            className="h-[320px] w-full rounded-[28px] object-cover shadow-2xl md:h-[500px]"
+            className="h-[260px] w-full rounded-[28px] object-cover shadow-2xl md:h-[500px]"
           />
 
         </div>
@@ -379,7 +379,7 @@ export default function Home() {
 
       </section>
 
-      {/* CATÁLOGO */}
+      {/* CATALOGO */}
       <section
         id="catalogo"
         className="mx-auto max-w-7xl px-4 pb-24 md:px-6"
@@ -563,6 +563,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
