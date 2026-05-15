@@ -15,6 +15,9 @@ export default function Home() {
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState("todos");
 
+  // MENU MOBILE
+  const [menuAbierto, setMenuAbierto] = useState(false);
+
   // OBTENER PRODUCTOS
   useEffect(() => {
 
@@ -124,14 +127,16 @@ export default function Home() {
       {/* NAVBAR */}
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
 
+          {/* LOGO */}
           <h1 className="text-2xl font-black md:text-3xl">
 
             Glam Gems
 
           </h1>
 
+          {/* MENU DESKTOP */}
           <nav className="hidden items-center gap-10 md:flex">
 
             <a
@@ -157,19 +162,81 @@ export default function Home() {
 
           </nav>
 
+          {/* DERECHA */}
           <div className="flex items-center gap-3">
 
+            {/* CARRITO */}
             <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold">
 
               {carrito.length}
 
             </div>
 
+            {/* WHATSAPP */}
             <a
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800"
+              className="hidden rounded-full bg-black px-5 py-2 text-sm text-white transition hover:bg-gray-800 md:block"
+            >
+              WhatsApp
+            </a>
+
+            {/* MENU MOBILE */}
+            <button
+              onClick={() =>
+                setMenuAbierto(!menuAbierto)
+              }
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-black md:hidden"
+            >
+              ☰
+            </button>
+
+          </div>
+
+        </div>
+
+      </header>
+
+      {/* MENU MOBILE */}
+      {menuAbierto && (
+
+        <div className="border-b border-gray-200 bg-[#f7f4ef] px-6 py-6 md:hidden">
+
+          <div className="flex flex-col gap-5">
+
+            <a
+              href="#inicio"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Inicio
+            </a>
+
+            <a
+              href="#catalogo"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Catálogo
+            </a>
+
+            <a
+              href="#beneficios"
+              onClick={() =>
+                setMenuAbierto(false)
+              }
+            >
+              Beneficios
+            </a>
+
+            <a
+              href="https://wa.me/50252914227"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-black px-5 py-3 text-center text-white"
             >
               WhatsApp
             </a>
@@ -178,18 +245,18 @@ export default function Home() {
 
         </div>
 
-      </header>
+      )}
 
       {/* HERO */}
       <section
         id="inicio"
-        className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2"
+        className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-6 md:py-20"
       >
 
         {/* TEXTO */}
-        <div>
+        <div className="text-center md:text-left">
 
-          <p className="mb-4 text-sm tracking-[8px] text-[#b68b4c]">
+          <p className="mb-4 text-sm tracking-[6px] text-[#b68b4c]">
 
             GLAM GEMS
 
@@ -201,7 +268,7 @@ export default function Home() {
 
           </h2>
 
-          <p className="mb-8 max-w-xl text-lg leading-relaxed text-gray-600 md:text-xl">
+          <p className="mb-8 max-w-xl text-base leading-relaxed text-gray-600 md:text-lg">
 
             Accesorios elegantes y regalos especiales
             para cada ocasión.
@@ -223,7 +290,7 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="joyas"
-            className="h-[400px] w-full rounded-[30px] object-cover shadow-2xl md:h-[500px]"
+            className="h-[320px] w-full rounded-[28px] object-cover shadow-2xl md:h-[500px]"
           />
 
         </div>
@@ -231,13 +298,13 @@ export default function Home() {
       </section>
 
       {/* CARRITO */}
-      <section className="mx-auto mb-28 max-w-7xl px-6">
+      <section className="mx-auto mb-20 max-w-7xl px-4 md:px-6">
 
-        <div className="rounded-[35px] bg-white p-8 shadow-xl">
+        <div className="rounded-[28px] bg-white p-6 shadow-xl md:p-8">
 
           <div className="mb-8 flex items-center justify-between">
 
-            <h3 className="text-3xl font-black md:text-4xl">
+            <h3 className="text-2xl font-black md:text-4xl">
 
               Carrito
 
@@ -265,12 +332,12 @@ export default function Home() {
 
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-2xl border border-gray-200 p-5"
+                  className="flex flex-col gap-4 rounded-2xl border border-gray-200 p-5 md:flex-row md:items-center md:justify-between"
                 >
 
                   <div>
 
-                    <h4 className="text-lg font-bold md:text-xl">
+                    <h4 className="text-lg font-bold">
 
                       {producto.nombre}
 
@@ -315,13 +382,13 @@ export default function Home() {
       {/* CATÁLOGO */}
       <section
         id="catalogo"
-        className="mx-auto max-w-7xl px-6 pb-24"
+        className="mx-auto max-w-7xl px-4 pb-24 md:px-6"
       >
 
         {/* TITULO */}
         <div className="mb-14 text-center">
 
-          <p className="mb-3 text-sm tracking-[8px] text-[#b68b4c]">
+          <p className="mb-3 text-sm tracking-[6px] text-[#b68b4c]">
 
             CATÁLOGO
 
@@ -382,13 +449,13 @@ export default function Home() {
 
             <div
               key={producto.id}
-              className="overflow-hidden rounded-[30px] bg-white shadow-lg transition duration-300 hover:-translate-y-2"
+              className="overflow-hidden rounded-[28px] bg-white shadow-lg transition duration-300 hover:-translate-y-2"
             >
 
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                className="h-[320px] w-full object-cover"
+                className="h-[280px] w-full object-cover md:h-[320px]"
               />
 
               <div className="p-6">
@@ -405,7 +472,7 @@ export default function Home() {
 
                 </p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
 
                   <span className="text-2xl font-black">
 
@@ -437,10 +504,10 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="mx-auto grid max-w-7xl gap-8 px-6 pb-24 md:grid-cols-3"
+        className="mx-auto grid max-w-7xl gap-8 px-4 pb-24 md:grid-cols-3 md:px-6"
       >
 
-        <div className="rounded-[30px] bg-white p-10 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -457,7 +524,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[30px] bg-white p-10 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -473,7 +540,7 @@ export default function Home() {
 
         </div>
 
-        <div className="rounded-[30px] bg-white p-10 shadow-lg">
+        <div className="rounded-[28px] bg-white p-8 shadow-lg">
 
           <h3 className="mb-4 text-2xl font-black">
 
@@ -496,5 +563,6 @@ export default function Home() {
   );
 
 }
+
 
 
