@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 import {
   collection,
@@ -11,32 +10,10 @@ import { db } from "../firebase";
 
 export default function Home() {
 
-  // PRODUCTOS
   const [productos, setProductos] = useState([]);
-
-  // CATEGORÍA
-  const [categoriaActiva, setCategoriaActiva] = useState("Todos");
-
-  // BÚSQUEDA
+  const [carrito, setCarrito] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-
-  // CARRITO
-  const [carrito, setCarrito] = useState(() => {
-
-    const carritoGuardado =
-      localStorage.getItem("carrito");
-
-    return carritoGuardado
-      ? JSON.parse(carritoGuardado)
-      : [];
-
-  });
-
-  // CARRITO LATERAL
-  const [abrirCarrito, setAbrirCarrito] = useState(false);
-
-  // MENU MOBILE
-  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [categoria, setCategoria] = useState("todos");
 
   // OBTENER PRODUCTOS
   useEffect(() => {
@@ -47,10 +24,11 @@ export default function Home() {
         collection(db, "productos")
       );
 
-      const productosFirebase = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const productosFirebase =
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
       setProductos(productosFirebase);
 
@@ -60,55 +38,15 @@ export default function Home() {
 
   }, []);
 
-  // GUARDAR CARRITO
-  useEffect(() => {
-
-    localStorage.setItem(
-      "carrito",
-      JSON.stringify(carrito)
-    );
-
-  }, [carrito]);
-
-  // CATEGORÍAS
-  const categorias = [
-    "Todos",
-    ...new Set(productos.map((p) => p.categoria)),
-  ];
-
-  // FILTRO PRODUCTOS
-  const productosFiltrados = productos.filter(
-    (producto) => {
-
-      const coincideCategoria =
-        categoriaActiva === "Todos"
-          ? true
-          : producto.categoria === categoriaActiva;
-
-      const coincideBusqueda =
-        producto.nombre
-          .toLowerCase()
-          .includes(
-            busqueda.toLowerCase()
-          );
-
-      return (
-        coincideCategoria &&
-        coincideBusqueda
-      );
-
-    }
-  );
-
   // AGREGAR AL CARRITO
-  const agregarAlCarrito = (producto) => {
+  const agregarCarrito = (producto) => {
 
     setCarrito([...carrito, producto]);
 
   };
 
-  // ELIMINAR DEL CARRITO
-  const eliminarDelCarrito = (index) => {
+  // ELIMINAR
+  const eliminarProducto = (index) => {
 
     const nuevoCarrito = [...carrito];
 
@@ -127,68 +65,72 @@ export default function Home() {
   // FINALIZAR PEDIDO
   const finalizarPedido = async () => {
 
-    if (carrito.length === 0) return;
+    if (carrito.length === 0) {
+
+      alert("Tu carrito está vacío");
+
+      return;
+
+    }
 
     try {
 
-      await addDoc(
-        collection(db, "ordenes"),
-        {
+      await addDoc(collection(db, "ordenes"), {
 
-          productos: carrito,
+        productos: carrito,
+        total,
+        estado: "pendiente",
+        fecha: new Date(),
 
-          total,
+      });
 
-          fecha: new Date(),
-
-          estado: "pendiente",
-
-        }
-      );
-
-      window.open(
-        `https://wa.me/50252914227?text=${encodeURIComponent(
-          carrito
-            .map(
-              (item) =>
-                `${item.nombre} - Q${item.precio}`
-            )
-            .join("\n")
-        )}`
-      );
+      alert("Pedido realizado");
 
       setCarrito([]);
-
-      localStorage.removeItem("carrito");
-
-      alert("Pedido enviado");
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Error al guardar pedido");
+      alert("Error al finalizar pedido");
 
     }
 
   };
 
+  // FILTRAR PRODUCTOS
+  const productosFiltrados = productos.filter((producto) => {
+
+    const coincideBusqueda =
+      producto.nombre
+        ?.toLowerCase()
+        .includes(busqueda.toLowerCase());
+
+    const coincideCategoria =
+      categoria === "todos" ||
+      producto.categoria === categoria;
+
+    return (
+      coincideBusqueda &&
+      coincideCategoria
+    );
+
+  });
+
   return (
 
-    <div className="min-h-screen overflow-x-hidden bg-[#f7f4ef] text-black">
+    <div className="min-h-screen bg-[#f7f4ef] text-black">
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 z-40 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-          {/* LOGO */}
-          <h1 className="text-2xl font-bold md:text-3xl">
+          <h1 className="text-3xl font-black">
             Glam Gems
           </h1>
 
-          {/* LINKS DESKTOP */}
-          <div className="hidden items-center gap-10 md:flex">
+          <nav className="hidden gap-10 md:flex">
 
             <a
               href="#inicio"
@@ -211,41 +153,20 @@ export default function Home() {
               Beneficios
             </a>
 
-          </div>
+          </nav>
 
-          {/* DERECHA */}
-          <div className="flex items-center gap-3 md:gap-4">
+          <div className="flex items-center gap-4">
 
-            {/* CARRITO */}
-            <button
-              onClick={() =>
-                setAbrirCarrito(!abrirCarrito)
-              }
-              className="rounded-full bg-white px-4 py-2 shadow-sm transition duration-300 hover:scale-105"
-            >
+            <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold">
 
               🛒 {carrito.length}
 
-            </button>
+            </div>
 
-            {/* MENU MOBILE */}
-            <button
-              onClick={() =>
-                setMenuAbierto(!menuAbierto)
-              }
-              className="text-3xl md:hidden"
-            >
-
-              ☰
-
-            </button>
-
-            {/* WHATSAPP */}
             <a
-              href="https://wa.me/50252914227"
+              href="https://wa.me/50200000000"
               target="_blank"
-              rel="noreferrer"
-              className="hidden rounded-full bg-black px-6 py-3 text-white transition duration-300 hover:scale-105 hover:bg-gray-800 md:block"
+              className="rounded-full bg-black px-5 py-2 text-white transition hover:bg-gray-800"
             >
               WhatsApp
             </a>
@@ -254,274 +175,148 @@ export default function Home() {
 
         </div>
 
-      </nav>
-
-      {/* MENU MOBILE */}
-      {menuAbierto && (
-
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-[76px] left-0 z-30 w-full border-b border-gray-200 bg-[#f7f4ef] p-6 md:hidden"
-        >
-
-          <div className="flex flex-col gap-6 text-lg">
-
-            <a
-              href="#inicio"
-              onClick={() =>
-                setMenuAbierto(false)
-              }
-            >
-              Inicio
-            </a>
-
-            <a
-              href="#catalogo"
-              onClick={() =>
-                setMenuAbierto(false)
-              }
-            >
-              Catálogo
-            </a>
-
-            <a
-              href="#beneficios"
-              onClick={() =>
-                setMenuAbierto(false)
-              }
-            >
-              Beneficios
-            </a>
-
-            <a
-              href="https://wa.me/50252914227"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-black px-6 py-3 text-center text-white"
-            >
-              WhatsApp
-            </a>
-
-          </div>
-
-        </motion.div>
-
-      )}
+      </header>
 
       {/* HERO */}
-      <motion.section
+      <section
         id="inicio"
-
-        initial={{ opacity: 0, y: 40 }}
-
-        animate={{ opacity: 1, y: 0 }}
-
-        transition={{ duration: 0.8 }}
-
-        className="mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-32 md:px-6 lg:grid-cols-2 lg:gap-24 lg:py-32"
+        className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-20 md:grid-cols-2"
       >
 
-        {/* TEXTO */}
-        <div className="text-center lg:text-left">
+        <div>
 
-          <p className="mb-4 text-xs uppercase tracking-[6px] text-[#b08b57] md:text-sm">
-
-            Glam Gems
-
+          <p className="mb-4 tracking-[8px] text-[#b68b4c]">
+            GLAM GEMS
           </p>
 
-          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
+          <h2 className="mb-6 text-5xl font-black leading-tight md:text-7xl">
 
             Joyas que elevan tu estilo
 
-          </h1>
+          </h2>
 
-          <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-gray-600 md:text-lg lg:mx-0 lg:text-xl">
+          <p className="mb-8 max-w-xl text-xl text-gray-600">
 
-            Accesorios elegantes y regalos especiales para cada ocasión.
+            Accesorios elegantes y regalos especiales
+            para cada ocasión.
 
           </p>
 
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <a
             href="#catalogo"
-            className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
+            className="rounded-full bg-black px-8 py-4 text-lg text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
-          </motion.a>
+          </a>
 
         </div>
 
-        {/* IMAGEN */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-
-          animate={{ opacity: 1, scale: 1 }}
-
-          transition={{ duration: 0.8 }}
-
-          className="flex justify-center"
-        >
+        <div>
 
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
-            alt="Joyas"
-            className="h-[420px] w-full max-w-[520px] rounded-[28px] object-cover shadow-2xl md:h-[520px]"
+            alt="joyas"
+            className="h-[650px] w-full rounded-[40px] object-cover shadow-2xl"
           />
 
-        </motion.div>
+        </div>
 
-      </motion.section>
+      </section>
 
       {/* CARRITO */}
-      <motion.div
-        initial={{ x: 400 }}
+      <section className="mx-auto mb-20 max-w-7xl px-6">
 
-        animate={{
-          x: abrirCarrito ? 0 : 400,
-        }}
+        <div className="rounded-[35px] bg-white p-8 shadow-xl">
 
-        transition={{ duration: 0.4 }}
+          <div className="mb-8 flex items-center justify-between">
 
-        className="fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl md:w-[380px]"
-      >
-
-        <div className="flex h-full flex-col">
-
-          {/* HEADER */}
-          <div className="flex items-center justify-between border-b p-6">
-
-            <h2 className="text-2xl font-bold md:text-3xl">
+            <h3 className="text-4xl font-black">
               Carrito
-            </h2>
+            </h3>
 
-            <button
-              onClick={() =>
-                setAbrirCarrito(false)
-              }
-              className="text-2xl"
-            >
-              ✕
-            </button>
+            <span className="text-3xl font-black">
+              Q{total}
+            </span>
 
           </div>
 
-          {/* PRODUCTOS */}
-          <div className="flex-1 space-y-4 overflow-y-auto p-6">
+          {carrito.length === 0 ? (
 
-            {carrito.length === 0 ? (
+            <p className="text-lg text-gray-500">
+              Tu carrito está vacío
+            </p>
 
-              <p className="text-gray-500">
-                Tu carrito está vacío
-              </p>
+          ) : (
 
-            ) : (
+            <div className="space-y-4">
 
-              carrito.map((item, index) => (
+              {carrito.map((producto, index) => (
 
-                <motion.div
+                <div
                   key={index}
-
-                  whileHover={{ scale: 1.02 }}
-
-                  className="rounded-2xl border border-gray-200 p-4"
+                  className="flex items-center justify-between rounded-2xl border border-gray-200 p-5"
                 >
 
-                  <div className="flex items-center gap-4">
+                  <div>
 
-                    <img
-                      src={item.imagen}
-                      alt={item.nombre}
-                      className="h-20 w-20 rounded-xl object-cover"
-                    />
+                    <h4 className="text-xl font-bold">
+                      {producto.nombre}
+                    </h4>
 
-                    <div className="flex-1">
-
-                      <h3 className="font-semibold">
-                        {item.nombre}
-                      </h3>
-
-                      <p className="text-gray-500">
-                        Q{item.precio}
-                      </p>
-
-                    </div>
+                    <p className="text-gray-500">
+                      Q{producto.precio}
+                    </p>
 
                   </div>
 
                   <button
                     onClick={() =>
-                      eliminarDelCarrito(index)
+                      eliminarProducto(index)
                     }
-                    className="mt-4 text-sm text-red-500"
+                    className="text-red-500 transition hover:text-red-700"
                   >
                     Eliminar
                   </button>
 
-                </motion.div>
+                </div>
 
-              ))
+              ))}
 
-            )}
-
-          </div>
-
-          {/* FOOTER */}
-          <div className="space-y-4 border-t p-6">
-
-            <div className="flex items-center justify-between text-lg font-bold md:text-xl">
-
-              <span>Total</span>
-
-              <span>Q{total}</span>
+              <button
+                onClick={finalizarPedido}
+                className="mt-6 w-full rounded-2xl bg-black p-5 text-lg text-white transition hover:bg-gray-800"
+              >
+                Finalizar Pedido
+              </button>
 
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-
-              whileTap={{ scale: 0.97 }}
-
-              onClick={finalizarPedido}
-
-              className="block w-full rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
-            >
-              Finalizar Pedido
-            </motion.button>
-
-          </div>
+          )}
 
         </div>
 
-      </motion.div>
+      </section>
 
-      {/* PRODUCTOS */}
+      {/* CATÁLOGO */}
       <section
         id="catalogo"
-        className="mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-32"
+        className="mx-auto max-w-7xl px-6 pb-24"
       >
 
-        {/* TITULO */}
-        <div className="mb-14 text-center md:mb-16">
+        <div className="mb-16 text-center">
 
-          <p className="mb-4 text-xs uppercase tracking-[6px] text-[#b08b57] md:text-sm">
-
-            Catálogo
-
+          <p className="mb-4 tracking-[8px] text-[#b68b4c]">
+            CATÁLOGO
           </p>
 
-          <h2 className="text-4xl font-bold md:text-5xl lg:text-6xl">
-
+          <h2 className="text-5xl font-black">
             Productos Destacados
-
           </h2>
 
         </div>
 
-        {/* BUSCADOR */}
-        <div className="mb-10 flex justify-center">
+        {/* FILTROS */}
+        <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
 
           <input
             type="text"
@@ -530,119 +325,82 @@ export default function Home() {
             onChange={(e) =>
               setBusqueda(e.target.value)
             }
-            className="w-full max-w-xl rounded-full border border-gray-300 bg-white px-6 py-4 outline-none transition focus:border-black"
+            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none md:max-w-md"
           />
 
-        </div>
+          <div className="flex flex-wrap gap-4">
 
-        {/* FILTROS */}
-        <div className="mb-14 flex flex-wrap justify-center gap-3 md:mb-16 md:gap-4">
+            {[
+              "todos",
+              "collares",
+              "anillos",
+              "aretes",
+            ].map((item) => (
 
-          {categorias.map((categoria) => (
+              <button
+                key={item}
+                onClick={() => setCategoria(item)}
+                className={`rounded-full px-6 py-3 capitalize transition ${
+                  categoria === item
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                {item}
+              </button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            ))}
 
-              key={categoria}
-
-              onClick={() =>
-                setCategoriaActiva(categoria)
-              }
-
-              className={`rounded-full px-5 py-3 text-sm transition md:px-6 ${
-                categoriaActiva === categoria
-                  ? "bg-black text-white"
-                  : "bg-white shadow-sm hover:bg-gray-100"
-              }`}
-            >
-              {categoria}
-            </motion.button>
-
-          ))}
+          </div>
 
         </div>
 
-        {/* GRID */}
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3 xl:gap-12">
+        {/* PRODUCTOS */}
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
 
           {productosFiltrados.map((producto) => (
 
-            <motion.div
+            <div
               key={producto.id}
-
-              initial={{ opacity: 0, y: 40 }}
-
-              whileInView={{ opacity: 1, y: 0 }}
-
-              transition={{ duration: 0.5 }}
-
-              viewport={{ once: true }}
-
-              whileHover={{ y: -8 }}
-
-              className="overflow-hidden rounded-[28px] bg-white shadow-md"
+              className="overflow-hidden rounded-[35px] bg-white shadow-lg transition hover:-translate-y-2"
             >
 
-              {/* IMAGEN */}
-              <motion.img
-                whileHover={{ scale: 1.05 }}
-
+              <img
                 src={producto.imagen}
-
                 alt={producto.nombre}
-
-                className="h-[320px] w-full object-cover md:h-[360px]"
+                className="h-[340px] w-full object-cover"
               />
 
-              {/* INFO */}
-              <div className="space-y-5 p-6 md:space-y-6 md:p-7">
+              <div className="p-7">
 
-                <div>
+                <h3 className="mb-3 text-3xl font-black">
+                  {producto.nombre}
+                </h3>
 
-                  <h3 className="mb-3 text-2xl font-semibold md:text-3xl">
+                <p className="mb-6 text-gray-600">
+                  {producto.descripcion}
+                </p>
 
-                    {producto.nombre}
+                <div className="flex items-center justify-between">
 
-                  </h3>
-
-                  <p className="leading-relaxed text-gray-500">
-
-                    {producto.descripcion ||
-                      "Joya elegante y sofisticada"}
-
-                  </p>
-
-                </div>
-
-                {/* FOOTER */}
-                <div className="flex items-center justify-between gap-4">
-
-                  <span className="text-3xl font-bold md:text-4xl">
-
+                  <span className="text-3xl font-black">
                     Q{producto.precio}
-
                   </span>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-
-                    whileTap={{ scale: 0.95 }}
-
+                  <button
                     onClick={() =>
-                      agregarAlCarrito(producto)
+                      agregarCarrito(producto)
                     }
-
-                    className="rounded-full bg-black px-5 py-3 text-sm text-white transition hover:bg-gray-800 md:px-6"
+                    className="rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800"
                   >
-                    Agregar
-                  </motion.button>
+                    Comprar
+                  </button>
 
                 </div>
 
               </div>
 
-            </motion.div>
+            </div>
 
           ))}
 
@@ -653,92 +411,50 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="bg-white py-20 md:py-32"
+        className="mx-auto grid max-w-7xl gap-8 px-6 pb-24 md:grid-cols-3"
       >
 
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-3 md:gap-12 md:px-6">
+        <div className="rounded-[35px] bg-white p-10 shadow-lg">
 
-          {[
-            {
-              titulo: "Calidad Premium",
-              texto:
-                "Joyas seleccionadas cuidadosamente para resaltar tu estilo.",
-            },
+          <h3 className="mb-4 text-3xl font-black">
+            Calidad Premium
+          </h3>
 
-            {
-              titulo: "Envíos",
-              texto:
-                "Entregas rápidas y seguras.",
-            },
+          <p className="text-gray-600">
+            Joyas seleccionadas cuidadosamente para
+            resaltar tu estilo.
+          </p>
 
-            {
-              titulo: "Atención Personalizada",
-              texto:
-                "Te ayudamos a elegir el regalo perfecto.",
-            },
+        </div>
 
-          ].map((item, index) => (
+        <div className="rounded-[35px] bg-white p-10 shadow-lg">
 
-            <motion.div
-              key={index}
+          <h3 className="mb-4 text-3xl font-black">
+            Envíos
+          </h3>
 
-              initial={{ opacity: 0, y: 40 }}
+          <p className="text-gray-600">
+            Entregas rápidas y seguras.
+          </p>
 
-              whileInView={{ opacity: 1, y: 0 }}
+        </div>
 
-              transition={{ duration: 0.5 }}
+        <div className="rounded-[35px] bg-white p-10 shadow-lg">
 
-              viewport={{ once: true }}
+          <h3 className="mb-4 text-3xl font-black">
+            Atención Personalizada
+          </h3>
 
-              whileHover={{ y: -5 }}
-
-              className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10"
-            >
-
-              <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
-
-                {item.titulo}
-
-              </h3>
-
-              <p className="leading-relaxed text-gray-600">
-
-                {item.texto}
-
-              </p>
-
-            </motion.div>
-
-          ))}
+          <p className="text-gray-600">
+            Te ayudamos a elegir el regalo perfecto.
+          </p>
 
         </div>
 
       </section>
 
-      {/* FOOTER */}
-      <footer className="mt-20 bg-black py-16 text-center text-white md:mt-24 md:py-20">
-
-        <h2 className="mb-4 text-4xl font-bold md:text-5xl">
-
-          Glam Gems
-
-        </h2>
-
-        <p className="mb-4 text-base text-gray-400 md:text-lg">
-
-          Joyas y regalos especiales
-
-        </p>
-
-        <p className="text-sm text-gray-500">
-
-          © 2026 Glam Gems
-
-        </p>
-
-      </footer>
-
     </div>
 
   );
+
 }
