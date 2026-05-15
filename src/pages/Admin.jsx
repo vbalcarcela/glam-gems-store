@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
+  getDocs,
 } from "firebase/firestore";
 
 import {
@@ -32,6 +33,9 @@ export default function Admin() {
   // SUBIDA
   const [subiendo, setSubiendo] = useState(false);
 
+  // ÓRDENES
+  const [ordenes, setOrdenes] = useState([]);
+
   // VERIFICAR LOGIN
   useEffect(() => {
 
@@ -42,6 +46,29 @@ export default function Admin() {
     });
 
     return () => unsubscribe();
+
+  }, []);
+
+  // OBTENER ÓRDENES
+  useEffect(() => {
+
+    const obtenerOrdenes = async () => {
+
+      const querySnapshot = await getDocs(
+        collection(db, "ordenes")
+      );
+
+      const ordenesFirebase =
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+      setOrdenes(ordenesFirebase);
+
+    };
+
+    obtenerOrdenes();
 
   }, []);
 
@@ -156,19 +183,19 @@ export default function Admin() {
 
   return (
 
-    <div className="min-h-screen bg-[#f7f4ef] p-10">
+    <div className="min-h-screen bg-[#f7f4ef] p-4 md:p-10">
 
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
 
         {!usuario ? (
 
           // LOGIN
           <form
             onSubmit={iniciarSesion}
-            className="space-y-6 rounded-3xl bg-white p-10 shadow-lg"
+            className="space-y-6 rounded-3xl bg-white p-8 shadow-lg md:p-10"
           >
 
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-3xl font-bold md:text-4xl">
               Login Administrador
             </h1>
 
@@ -203,9 +230,9 @@ export default function Admin() {
           <>
 
             {/* HEADER */}
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 
-              <h1 className="text-5xl font-bold">
+              <h1 className="text-4xl font-bold md:text-5xl">
                 Panel Administrador
               </h1>
 
@@ -221,8 +248,12 @@ export default function Admin() {
             {/* FORMULARIO */}
             <form
               onSubmit={agregarProducto}
-              className="space-y-6 rounded-3xl bg-white p-10 shadow-lg"
+              className="space-y-6 rounded-3xl bg-white p-8 shadow-lg md:p-10"
             >
+
+              <h2 className="text-3xl font-bold">
+                Agregar Producto
+              </h2>
 
               {/* NOMBRE */}
               <input
@@ -305,6 +336,66 @@ export default function Admin() {
               </button>
 
             </form>
+
+            {/* ÓRDENES */}
+            <div className="mt-16 rounded-3xl bg-white p-8 shadow-lg md:p-10">
+
+              <h2 className="mb-8 text-3xl font-bold md:text-4xl">
+                Órdenes
+              </h2>
+
+              <div className="space-y-6">
+
+                {ordenes.length === 0 ? (
+
+                  <p className="text-gray-500">
+                    No hay órdenes todavía
+                  </p>
+
+                ) : (
+
+                  ordenes.map((orden) => (
+
+                    <div
+                      key={orden.id}
+                      className="rounded-2xl border border-gray-200 p-6"
+                    >
+
+                      <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+
+                        <span className="font-semibold capitalize">
+                          Estado: {orden.estado}
+                        </span>
+
+                        <span className="text-lg font-bold">
+                          Q{orden.total}
+                        </span>
+
+                      </div>
+
+                      <div className="space-y-2">
+
+                        {orden.productos?.map(
+                          (producto, index) => (
+
+                            <p key={index}>
+                              • {producto.nombre}
+                            </p>
+
+                          )
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  ))
+
+                )}
+
+              </div>
+
+            </div>
 
           </>
 
