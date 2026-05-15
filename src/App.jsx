@@ -4,8 +4,20 @@ import { db } from "./firebase";
 
 export default function App() {
   const [productos, setProductos] = useState([]);
+  const [categoriaActiva, setCategoriaActiva] = useState("Todos");
 
   useEffect(() => {
+    const categorias = [
+  "Todos",
+  ...new Set(productos.map((p) => p.categoria)),
+];
+
+const productosFiltrados =
+  categoriaActiva === "Todos"
+    ? productos
+    : productos.filter(
+        (producto) => producto.categoria === categoriaActiva
+      );
     const obtenerProductos = async () => {
       const querySnapshot = await getDocs(collection(db, "productos"));
 
@@ -144,9 +156,29 @@ export default function App() {
           </div>
 
           {/* GRID */}
+          {/* FILTROS */}
+<div className="mb-16 flex flex-wrap justify-center gap-4">
+
+  {categorias.map((categoria) => (
+
+    <button
+      key={categoria}
+      onClick={() => setCategoriaActiva(categoria)}
+      className={`rounded-full px-6 py-3 text-sm font-medium transition ${
+        categoriaActiva === categoria
+          ? "bg-black text-white"
+          : "bg-white text-black hover:bg-gray-200"
+      }`}
+    >
+      {categoria}
+    </button>
+
+  ))}
+
+</div>
           <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
 
-            {productos.map((producto) => (
+            {productosFiltrados.map((producto) => (
 
               <div
                 key={producto.id}
