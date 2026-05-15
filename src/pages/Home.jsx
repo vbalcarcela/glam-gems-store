@@ -558,11 +558,110 @@ export default function Home() {
 
       </section>
 
+      {/* FOOTER */}
+      <footer className="border-t border-gray-800 bg-black text-white">
+
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-3 md:px-6">
+
+          {/* BRAND */}
+          <div>
+
+            <h2 className="mb-4 text-3xl font-black">
+
+              Glam Gems
+
+            </h2>
+
+            <p className="max-w-sm leading-relaxed text-gray-400">
+
+              Joyas elegantes y accesorios diseñados
+              para elevar tu estilo en cualquier ocasión.
+
+            </p>
+
+          </div>
+
+          {/* LINKS */}
+          <div>
+
+            <h3 className="mb-4 text-xl font-bold">
+
+              Navegación
+
+            </h3>
+
+            <div className="flex flex-col gap-3 text-gray-400">
+
+              <a
+                href="#inicio"
+                className="transition hover:text-white"
+              >
+                Inicio
+              </a>
+
+              <a
+                href="#catalogo"
+                className="transition hover:text-white"
+              >
+                Catálogo
+              </a>
+
+              <a
+                href="#beneficios"
+                className="transition hover:text-white"
+              >
+                Beneficios
+              </a>
+
+            </div>
+
+          </div>
+
+          {/* CONTACTO */}
+          <div>
+
+            <h3 className="mb-4 text-xl font-bold">
+
+              Contacto
+
+            </h3>
+
+            <div className="flex flex-col gap-3 text-gray-400">
+
+              <a
+                href="https://wa.me/50252914227"
+                target="_blank"
+                rel="noreferrer"
+                className="transition hover:text-white"
+              >
+                WhatsApp
+              </a>
+
+              <p>
+                Guatemala
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* COPYRIGHT */}
+        <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
+
+          © 2026 Glam Gems. Todos los derechos reservados.
+
+        </div>
+
+      </footer>
+
     </div>
 
   );
 
 }
+
 
 
 
