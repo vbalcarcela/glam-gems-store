@@ -332,7 +332,7 @@ export default function Home() {
 
                 <div
                   key={index}
-                  className="flex flex-col gap-4 rounded-2xl border border-gray-200 p-5 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[#fafafa] p-5 md:flex-row md:items-center md:justify-between"
                 >
 
                   <div>
@@ -355,7 +355,7 @@ export default function Home() {
                     onClick={() =>
                       eliminarProducto(index)
                     }
-                    className="font-semibold text-red-500 transition hover:text-red-700"
+                    className="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
                   >
                     Eliminar
                   </button>
@@ -366,7 +366,7 @@ export default function Home() {
 
               <button
                 onClick={finalizarPedido}
-                className="mt-4 w-full rounded-2xl bg-black p-4 text-lg text-white transition hover:bg-gray-800"
+                className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition hover:bg-gray-800"
               >
                 Finalizar Pedido
               </button>
@@ -563,6 +563,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
