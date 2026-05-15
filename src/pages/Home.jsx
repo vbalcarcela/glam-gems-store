@@ -182,7 +182,7 @@ export default function Home() {
               WhatsApp
             </a>
 
-            {/* BOTON MENU */}
+            {/* MENU MOBILE */}
             <button
               onClick={() =>
                 setMenuAbierto(!menuAbierto)
@@ -455,12 +455,12 @@ export default function Home() {
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                className="h-[280px] w-full object-cover md:h-[320px]"
+                className="h-[240px] w-full object-cover md:h-[320px]"
               />
 
-              <div className="p-6">
+              <div className="p-5">
 
-                <h3 className="mb-3 text-2xl font-black">
+                <h3 className="mb-2 text-xl font-black md:text-2xl">
 
                   {producto.nombre}
 
@@ -484,7 +484,7 @@ export default function Home() {
                     onClick={() =>
                       agregarCarrito(producto)
                     }
-                    className="rounded-full bg-black px-5 py-3 text-white transition hover:bg-gray-800"
+                    className="rounded-full bg-black px-4 py-2 text-sm text-white transition hover:bg-gray-800"
                   >
                     Comprar
                   </button>
@@ -563,6 +563,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
