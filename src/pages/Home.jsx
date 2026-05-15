@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -66,7 +68,7 @@ export default function Home() {
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
-  // PRODUCTOS FILTRADOS
+  // FILTRO
   const productosFiltrados =
     categoriaActiva === "Todos"
       ? productos
@@ -82,7 +84,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR DEL CARRITO
+  // ELIMINAR
   const eliminarDelCarrito = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -147,14 +149,14 @@ export default function Home() {
               onClick={() =>
                 setAbrirCarrito(!abrirCarrito)
               }
-              className="rounded-full bg-white px-4 py-2 shadow-sm transition hover:scale-105"
+              className="rounded-full bg-white px-4 py-2 shadow-sm transition duration-300 hover:scale-105"
             >
 
               🛒 {carrito.length}
 
             </button>
 
-            {/* BOTON MOBILE */}
+            {/* MENU MOBILE */}
             <button
               onClick={() =>
                 setMenuAbierto(!menuAbierto)
@@ -171,7 +173,7 @@ export default function Home() {
               href="https://wa.me/50252914227"
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-full bg-black px-6 py-3 text-white transition hover:bg-gray-800 md:block"
+              className="hidden rounded-full bg-black px-6 py-3 text-white transition duration-300 hover:scale-105 hover:bg-gray-800 md:block"
             >
               WhatsApp
             </a>
@@ -185,7 +187,11 @@ export default function Home() {
       {/* MENU MOBILE */}
       {menuAbierto && (
 
-        <div className="fixed top-[76px] left-0 z-30 w-full border-b border-gray-200 bg-[#f7f4ef] p-6 md:hidden">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-[76px] left-0 z-30 w-full border-b border-gray-200 bg-[#f7f4ef] p-6 md:hidden"
+        >
 
           <div className="flex flex-col gap-6 text-lg">
 
@@ -227,13 +233,20 @@ export default function Home() {
 
           </div>
 
-        </div>
+        </motion.div>
 
       )}
 
       {/* HERO */}
-      <section
+      <motion.section
         id="inicio"
+
+        initial={{ opacity: 0, y: 40 }}
+
+        animate={{ opacity: 1, y: 0 }}
+
+        transition={{ duration: 0.8 }}
+
         className="mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-32 md:px-6 lg:grid-cols-2 lg:gap-24 lg:py-32"
       >
 
@@ -258,17 +271,27 @@ export default function Home() {
 
           </p>
 
-          <a
+          <motion.a
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             href="#catalogo"
             className="inline-block rounded-full bg-black px-8 py-4 text-white transition hover:bg-gray-800"
           >
             Ver Catálogo
-          </a>
+          </motion.a>
 
         </div>
 
         {/* IMAGEN */}
-        <div className="flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+
+          animate={{ opacity: 1, scale: 1 }}
+
+          transition={{ duration: 0.8 }}
+
+          className="flex justify-center"
+        >
 
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
@@ -276,17 +299,21 @@ export default function Home() {
             className="h-[420px] w-full max-w-[520px] rounded-[28px] object-cover shadow-2xl md:h-[520px]"
           />
 
-        </div>
+        </motion.div>
 
-      </section>
+      </motion.section>
 
-      {/* CARRITO LATERAL */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl transition-transform duration-300 md:w-[380px] ${
-          abrirCarrito
-            ? "translate-x-0"
-            : "translate-x-full"
-        }`}
+      {/* CARRITO */}
+      <motion.div
+        initial={{ x: 400 }}
+
+        animate={{
+          x: abrirCarrito ? 0 : 400,
+        }}
+
+        transition={{ duration: 0.4 }}
+
+        className="fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl md:w-[380px]"
       >
 
         <div className="flex h-full flex-col">
@@ -322,8 +349,11 @@ export default function Home() {
 
               carrito.map((item, index) => (
 
-                <div
+                <motion.div
                   key={index}
+
+                  whileHover={{ scale: 1.02 }}
+
                   className="rounded-2xl border border-gray-200 p-4"
                 >
 
@@ -358,7 +388,7 @@ export default function Home() {
                     Eliminar
                   </button>
 
-                </div>
+                </motion.div>
 
               ))
 
@@ -377,7 +407,9 @@ export default function Home() {
 
             </div>
 
-            <a
+            <motion.a
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               href={`https://wa.me/50252914227?text=${encodeURIComponent(
                 carrito
                   .map(
@@ -391,13 +423,13 @@ export default function Home() {
               className="block rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
             >
               Finalizar Pedido
-            </a>
+            </motion.a>
 
           </div>
 
         </div>
 
-      </div>
+      </motion.div>
 
       {/* PRODUCTOS */}
       <section
@@ -427,11 +459,16 @@ export default function Home() {
 
           {categorias.map((categoria) => (
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+
               key={categoria}
+
               onClick={() =>
                 setCategoriaActiva(categoria)
               }
+
               className={`rounded-full px-5 py-3 text-sm transition md:px-6 ${
                 categoriaActiva === categoria
                   ? "bg-black text-white"
@@ -439,7 +476,7 @@ export default function Home() {
               }`}
             >
               {categoria}
-            </button>
+            </motion.button>
 
           ))}
 
@@ -450,15 +487,30 @@ export default function Home() {
 
           {productosFiltrados.map((producto) => (
 
-            <div
+            <motion.div
               key={producto.id}
-              className="overflow-hidden rounded-[28px] bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+
+              initial={{ opacity: 0, y: 40 }}
+
+              whileInView={{ opacity: 1, y: 0 }}
+
+              transition={{ duration: 0.5 }}
+
+              viewport={{ once: true }}
+
+              whileHover={{ y: -8 }}
+
+              className="overflow-hidden rounded-[28px] bg-white shadow-md"
             >
 
               {/* IMAGEN */}
-              <img
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+
                 src={producto.imagen}
+
                 alt={producto.nombre}
+
                 className="h-[320px] w-full object-cover md:h-[360px]"
               />
 
@@ -491,20 +543,25 @@ export default function Home() {
 
                   </span>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+
+                    whileTap={{ scale: 0.95 }}
+
                     onClick={() =>
                       agregarAlCarrito(producto)
                     }
+
                     className="rounded-full bg-black px-5 py-3 text-sm text-white transition hover:bg-gray-800 md:px-6"
                   >
                     Agregar
-                  </button>
+                  </motion.button>
 
                 </div>
 
               </div>
 
-            </div>
+            </motion.div>
 
           ))}
 
@@ -520,56 +577,58 @@ export default function Home() {
 
         <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-3 md:gap-12 md:px-6">
 
-          {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
+          {[
+            {
+              titulo: "Calidad Premium",
+              texto:
+                "Joyas seleccionadas cuidadosamente para resaltar tu estilo.",
+            },
 
-            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
+            {
+              titulo: "Envíos",
+              texto:
+                "Entregas rápidas y seguras.",
+            },
 
-              Calidad Premium
+            {
+              titulo: "Atención Personalizada",
+              texto:
+                "Te ayudamos a elegir el regalo perfecto.",
+            },
 
-            </h3>
+          ].map((item, index) => (
 
-            <p className="leading-relaxed text-gray-600">
+            <motion.div
+              key={index}
 
-              Joyas seleccionadas cuidadosamente para resaltar tu estilo.
+              initial={{ opacity: 0, y: 40 }}
 
-            </p>
+              whileInView={{ opacity: 1, y: 0 }}
 
-          </div>
+              transition={{ duration: 0.5 }}
 
-          {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
+              viewport={{ once: true }}
 
-            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
+              whileHover={{ y: -5 }}
 
-              Envíos
+              className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10"
+            >
 
-            </h3>
+              <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
 
-            <p className="leading-relaxed text-gray-600">
+                {item.titulo}
 
-              Entregas rápidas y seguras.
+              </h3>
 
-            </p>
+              <p className="leading-relaxed text-gray-600">
 
-          </div>
+                {item.texto}
 
-          {/* ITEM */}
-          <div className="rounded-[28px] bg-[#f7f4ef] p-8 shadow-sm md:p-10">
+              </p>
 
-            <h3 className="mb-5 text-2xl font-semibold md:text-3xl">
+            </motion.div>
 
-              Atención Personalizada
-
-            </h3>
-
-            <p className="leading-relaxed text-gray-600">
-
-              Te ayudamos a elegir el regalo perfecto.
-
-            </p>
-
-          </div>
+          ))}
 
         </div>
 
