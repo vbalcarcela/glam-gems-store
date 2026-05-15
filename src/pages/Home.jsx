@@ -15,13 +15,8 @@ export default function Home() {
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState("todos");
 
-  // MENU MOBILE
   const [menuAbierto, setMenuAbierto] = useState(false);
-
-  // LOADING
   const [loading, setLoading] = useState(true);
-
-  // CARRITO
   const [carritoAbierto, setCarritoAbierto] = useState(false);
 
   // OBTENER PRODUCTOS
@@ -59,10 +54,12 @@ export default function Home() {
 
   }, []);
 
-  // AGREGAR AL CARRITO
+  // AGREGAR CARRITO
   const agregarCarrito = (producto) => {
 
     setCarrito([...carrito, producto]);
+
+    setCarritoAbierto(true);
 
   };
 
@@ -121,7 +118,7 @@ export default function Home() {
 
   };
 
-  // FILTROS
+  // FILTRAR PRODUCTOS
   const productosFiltrados = productos.filter((producto) => {
 
     const coincideBusqueda =
@@ -185,7 +182,7 @@ export default function Home() {
           {/* DERECHA */}
           <div className="flex items-center gap-4">
 
-            {/* CARRITO */}
+            {/* BOTON CARRITO */}
             <button
               onClick={() =>
                 setCarritoAbierto(!carritoAbierto)
@@ -287,7 +284,7 @@ export default function Home() {
 
           </p>
 
-          <h2 className="mb-8 text-5xl font-black leading-[1.05] lg:text-7xl">
+          <h2 className="mb-8 text-4xl font-black leading-[1.05] lg:text-6xl">
 
             Joyas que elevan tu estilo
 
@@ -315,157 +312,175 @@ export default function Home() {
           <img
             src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
             alt="joyas"
-            className="h-[650px] w-full rounded-[40px] object-cover shadow-2xl"
+            className="h-[520px] w-full rounded-[40px] object-cover shadow-2xl lg:h-[620px]"
           />
 
         </div>
 
       </section>
 
-      {/* CARRITO */}
+      {/* OVERLAY */}
       {carritoAbierto && (
 
-        <section className="fixed right-0 top-0 z-[999] h-screen w-full max-w-[420px] border-l border-gray-200 bg-white shadow-2xl">
+        <div
+          onClick={() =>
+            setCarritoAbierto(false)
+          }
+          className="fixed inset-0 z-[998] bg-black/40 backdrop-blur-sm"
+        />
 
-          <div className="flex h-full flex-col">
+      )}
 
-            {/* HEADER */}
-            <div className="flex items-center justify-between border-b border-gray-200 p-6">
+      {/* CARRITO */}
+      <section
+        className={`fixed right-0 top-0 z-[999] h-screen w-full max-w-[380px] border-l border-gray-200 bg-white shadow-2xl transition-all duration-500 ${
+          carritoAbierto
+            ? "translate-x-0"
+            : "translate-x-full"
+        }`}
+      >
 
-              <h3 className="text-4xl font-black">
-                Carrito
-              </h3>
+        <div className="flex h-full flex-col">
 
-              <button
-                onClick={() =>
-                  setCarritoAbierto(false)
-                }
-                className="text-4xl text-gray-500 transition hover:text-black"
-              >
-                ×
-              </button>
+          {/* HEADER */}
+          <div className="flex items-center justify-between border-b border-gray-200 p-6">
 
-            </div>
+            <h3 className="text-4xl font-black">
 
-            {/* CONTENIDO */}
-            <div className="flex-1 overflow-y-auto p-6">
+              Carrito
 
-              {carrito.length === 0 ? (
+            </h3>
 
-                <div className="flex h-full flex-col items-center justify-center text-center">
-
-                  <div className="mb-6 text-7xl">
-                    Bolsa
-                  </div>
-
-                  <h4 className="mb-2 text-2xl font-bold">
-
-                    Tu carrito está vacío
-
-                  </h4>
-
-                  <p className="max-w-xs text-gray-500">
-
-                    Agrega productos para verlos aquí.
-
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <div className="space-y-5">
-
-                  {carrito.map((producto, index) => (
-
-                    <div
-                      key={index}
-                      className="rounded-3xl border border-gray-200 p-5"
-                    >
-
-                      <div className="flex items-center gap-4">
-
-                        <img
-                          src={producto.imagen}
-                          alt={producto.nombre}
-                          className="h-24 w-24 rounded-2xl object-cover"
-                        />
-
-                        <div className="flex-1">
-
-                          <h4 className="font-bold">
-
-                            {producto.nombre}
-
-                          </h4>
-
-                          <p className="mt-1 text-gray-500">
-
-                            Q{producto.precio}
-
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          eliminarProducto(index)
-                        }
-                        className="mt-4 text-sm font-semibold text-red-500"
-                      >
-                        Eliminar
-                      </button>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-              )}
-
-            </div>
-
-            {/* FOOTER */}
-            <div className="border-t border-gray-200 p-6">
-
-              <div className="mb-5 flex items-center justify-between">
-
-                <span className="text-2xl font-bold">
-
-                  Total
-
-                </span>
-
-                <span className="text-3xl font-black">
-
-                  Q{total}
-
-                </span>
-
-              </div>
-
-              <button
-                onClick={finalizarPedido}
-                className="w-full rounded-2xl bg-black p-4 text-lg font-semibold text-white transition hover:bg-gray-800"
-              >
-                Finalizar Pedido
-              </button>
-
-            </div>
+            <button
+              onClick={() =>
+                setCarritoAbierto(false)
+              }
+              className="text-4xl text-gray-500 transition hover:text-black"
+            >
+              ×
+            </button>
 
           </div>
 
-        </section>
+          {/* CONTENIDO */}
+          <div className="flex-1 overflow-y-auto p-6">
 
-      )}
+            {carrito.length === 0 ? (
+
+              <div className="flex h-full flex-col items-center justify-center text-center">
+
+                <div className="mb-6 text-5xl">
+
+                  Bolsa
+
+                </div>
+
+                <h4 className="mb-2 text-2xl font-bold">
+
+                  Tu carrito está vacío
+
+                </h4>
+
+                <p className="max-w-xs text-gray-500">
+
+                  Agrega productos para verlos aquí.
+
+                </p>
+
+              </div>
+
+            ) : (
+
+              <div className="space-y-5">
+
+                {carrito.map((producto, index) => (
+
+                  <div
+                    key={index}
+                    className="rounded-3xl border border-gray-200 p-5"
+                  >
+
+                    <div className="flex items-center gap-4">
+
+                      <img
+                        src={producto.imagen}
+                        alt={producto.nombre}
+                        className="h-24 w-24 rounded-2xl object-cover"
+                      />
+
+                      <div className="flex-1">
+
+                        <h4 className="font-bold">
+
+                          {producto.nombre}
+
+                        </h4>
+
+                        <p className="mt-1 text-gray-500">
+
+                          Q{producto.precio}
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        eliminarProducto(index)
+                      }
+                      className="mt-4 text-sm font-semibold text-red-500"
+                    >
+                      Eliminar
+                    </button>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+            )}
+
+          </div>
+
+          {/* FOOTER */}
+          <div className="border-t border-gray-200 p-6">
+
+            <div className="mb-5 flex items-center justify-between">
+
+              <span className="text-2xl font-bold">
+
+                Total
+
+              </span>
+
+              <span className="text-3xl font-black">
+
+                Q{total}
+
+              </span>
+
+            </div>
+
+            <button
+              onClick={finalizarPedido}
+              className="w-full rounded-2xl bg-black p-4 text-lg font-semibold text-white transition hover:bg-gray-800"
+            >
+              Finalizar Pedido
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
 
       {/* CATALOGO */}
       <section
         id="catalogo"
-        className="mx-auto max-w-[1400px] px-6 pb-28"
+        className="mx-auto max-w-[1400px] px-6 pb-20"
       >
 
         {/* TITULO */}
@@ -509,7 +524,9 @@ export default function Home() {
 
               <button
                 key={item}
-                onClick={() => setCategoria(item)}
+                onClick={() =>
+                  setCategoria(item)
+                }
                 className={`rounded-full px-6 py-3 capitalize transition ${
                   categoria === item
                     ? "bg-black text-white"
@@ -534,12 +551,12 @@ export default function Home() {
 
               <div
                 key={index}
-                className="animate-pulse overflow-hidden rounded-[32px] bg-white shadow-md"
+                className="animate-pulse overflow-hidden rounded-[32px] bg-white shadow-lg"
               >
 
                 <div className="h-[320px] bg-gray-200" />
 
-                <div className="space-y-4 p-6">
+                <div className="space-y-4 p-7">
 
                   <div className="h-6 rounded bg-gray-200" />
 
@@ -559,7 +576,7 @@ export default function Home() {
 
               <div
                 key={producto.id}
-                className="overflow-hidden rounded-[32px] bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="overflow-hidden rounded-[32px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
               >
 
                 <img
@@ -568,15 +585,15 @@ export default function Home() {
                   className="h-[320px] w-full object-cover"
                 />
 
-                <div className="p-6">
+                <div className="space-y-4 p-7">
 
-                  <h3 className="mb-2 text-2xl font-black">
+                  <h3 className="text-2xl font-black">
 
                     {producto.nombre}
 
                   </h3>
 
-                  <p className="mb-6 text-gray-600">
+                  <p className="text-gray-600">
 
                     {producto.descripcion}
 
@@ -616,7 +633,7 @@ export default function Home() {
       {/* BENEFICIOS */}
       <section
         id="beneficios"
-        className="mx-auto grid max-w-[1400px] gap-8 px-6 pb-28 md:grid-cols-3"
+        className="mx-auto grid max-w-[1400px] gap-8 px-6 pb-20 md:grid-cols-3"
       >
 
         <div className="rounded-[32px] bg-white p-8 shadow-lg">
@@ -673,7 +690,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-black text-white">
 
-        <div className="mx-auto grid max-w-[1400px] gap-12 px-6 py-16 md:grid-cols-3">
+        <div className="mx-auto grid max-w-[1400px] gap-12 px-6 py-12 md:grid-cols-3">
 
           {/* BRAND */}
           <div>
