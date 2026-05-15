@@ -18,22 +18,37 @@ export default function Home() {
   // MENU MOBILE
   const [menuAbierto, setMenuAbierto] = useState(false);
 
+  // LOADING
+  const [loading, setLoading] = useState(true);
+
   // OBTENER PRODUCTOS
   useEffect(() => {
 
     const obtenerProductos = async () => {
 
-      const querySnapshot = await getDocs(
-        collection(db, "productos")
-      );
+      try {
 
-      const productosFirebase =
-        querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const querySnapshot = await getDocs(
+          collection(db, "productos")
+        );
 
-      setProductos(productosFirebase);
+        const productosFirebase =
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+        setProductos(productosFirebase);
+
+      } catch (error) {
+
+        console.log(error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
 
     };
 
@@ -445,57 +460,94 @@ export default function Home() {
         {/* PRODUCTOS */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-          {productosFiltrados.map((producto) => (
+          {loading ? (
 
-            <div
-              key={producto.id}
-              className="overflow-hidden rounded-[28px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-            >
+            [...Array(6)].map((_, index) => (
 
-              <img
-                src={producto.imagen}
-                alt={producto.nombre}
-                className="h-[240px] w-full object-cover md:h-[320px]"
-              />
+              <div
+                key={index}
+                className="animate-pulse overflow-hidden rounded-[28px] bg-white shadow-lg"
+              >
 
-              <div className="p-5">
+                <div className="h-[240px] bg-gray-200" />
 
-                <h3 className="mb-2 text-xl font-black md:text-2xl">
+                <div className="space-y-4 p-5">
 
-                  {producto.nombre}
+                  <div className="h-6 rounded bg-gray-200" />
 
-                </h3>
+                  <div className="h-4 rounded bg-gray-200" />
 
-                <p className="mb-6 text-gray-600">
+                  <div className="h-4 w-2/3 rounded bg-gray-200" />
 
-                  {producto.descripcion}
+                  <div className="mt-6 flex items-center justify-between">
 
-                </p>
+                    <div className="h-6 w-20 rounded bg-gray-200" />
 
-                <div className="flex items-center justify-between gap-4">
+                    <div className="h-10 w-24 rounded-full bg-gray-200" />
 
-                  <span className="text-2xl font-black">
-
-                    Q{producto.precio}
-
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      agregarCarrito(producto)
-                    }
-                    className="rounded-full bg-black px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
-                  >
-                    Comprar
-                  </button>
+                  </div>
 
                 </div>
 
               </div>
 
-            </div>
+            ))
 
-          ))}
+          ) : (
+
+            productosFiltrados.map((producto) => (
+
+              <div
+                key={producto.id}
+                className="overflow-hidden rounded-[28px] bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              >
+
+                <img
+                  src={producto.imagen}
+                  alt={producto.nombre}
+                  className="h-[240px] w-full object-cover md:h-[320px]"
+                />
+
+                <div className="p-5">
+
+                  <h3 className="mb-2 text-xl font-black md:text-2xl">
+
+                    {producto.nombre}
+
+                  </h3>
+
+                  <p className="mb-6 text-gray-600">
+
+                    {producto.descripcion}
+
+                  </p>
+
+                  <div className="flex items-center justify-between gap-4">
+
+                    <span className="text-2xl font-black">
+
+                      Q{producto.precio}
+
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        agregarCarrito(producto)
+                      }
+                      className="rounded-full bg-black px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
+                    >
+                      Comprar
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            ))
+
+          )}
 
         </div>
 
@@ -661,6 +713,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
