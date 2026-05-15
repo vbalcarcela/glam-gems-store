@@ -21,6 +21,9 @@ export default function Home() {
   // LOADING
   const [loading, setLoading] = useState(true);
 
+  // CARRITO
+  const [carritoAbierto, setCarritoAbierto] = useState(false);
+
   // OBTENER PRODUCTOS
   useEffect(() => {
 
@@ -106,6 +109,8 @@ export default function Home() {
 
       setCarrito([]);
 
+      setCarritoAbierto(false);
+
     } catch (error) {
 
       console.log(error);
@@ -181,11 +186,16 @@ export default function Home() {
           <div className="flex items-center gap-3">
 
             {/* CARRITO */}
-            <div className="rounded-full border border-black px-4 py-2 text-sm font-semibold transition hover:bg-black hover:text-white">
+            <button
+              onClick={() =>
+                setCarritoAbierto(!carritoAbierto)
+              }
+              className="rounded-full border border-black px-4 py-2 text-sm font-semibold transition hover:bg-black hover:text-white"
+            >
 
-              {carrito.length}
+              Carrito ({carrito.length})
 
-            </div>
+            </button>
 
             {/* WHATSAPP */}
             <a
@@ -313,86 +323,90 @@ export default function Home() {
       </section>
 
       {/* CARRITO */}
-      <section className="mx-auto mb-20 max-w-7xl px-4 md:px-6">
+      {carritoAbierto && (
 
-        <div className="rounded-[28px] bg-white p-6 shadow-xl md:p-8">
+        <section className="mx-auto mb-20 max-w-7xl px-4 md:px-6">
 
-          <div className="mb-8 flex items-center justify-between">
+          <div className="rounded-[28px] bg-white p-6 shadow-xl md:p-8">
 
-            <h3 className="text-2xl font-black md:text-4xl">
+            <div className="mb-8 flex items-center justify-between">
 
-              Carrito
+              <h3 className="text-2xl font-black md:text-4xl">
 
-            </h3>
+                Carrito
 
-            <span className="text-2xl font-black md:text-3xl">
+              </h3>
 
-              Q{total}
+              <span className="text-2xl font-black md:text-3xl">
 
-            </span>
+                Q{total}
 
-          </div>
-
-          {carrito.length === 0 ? (
-
-            <p className="text-gray-500">
-              Tu carrito está vacío
-            </p>
-
-          ) : (
-
-            <div className="space-y-4">
-
-              {carrito.map((producto, index) => (
-
-                <div
-                  key={index}
-                  className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[#fafafa] p-5 md:flex-row md:items-center md:justify-between"
-                >
-
-                  <div>
-
-                    <h4 className="text-lg font-bold">
-
-                      {producto.nombre}
-
-                    </h4>
-
-                    <p className="text-gray-500">
-
-                      Q{producto.precio}
-
-                    </p>
-
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      eliminarProducto(index)
-                    }
-                    className="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
-                  >
-                    Eliminar
-                  </button>
-
-                </div>
-
-              ))}
-
-              <button
-                onClick={finalizarPedido}
-                className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
-              >
-                Finalizar Pedido
-              </button>
+              </span>
 
             </div>
 
-          )}
+            {carrito.length === 0 ? (
 
-        </div>
+              <p className="text-gray-500">
+                Tu carrito está vacío
+              </p>
 
-      </section>
+            ) : (
+
+              <div className="space-y-4">
+
+                {carrito.map((producto, index) => (
+
+                  <div
+                    key={index}
+                    className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[#fafafa] p-5 md:flex-row md:items-center md:justify-between"
+                  >
+
+                    <div>
+
+                      <h4 className="text-lg font-bold">
+
+                        {producto.nombre}
+
+                      </h4>
+
+                      <p className="text-gray-500">
+
+                        Q{producto.precio}
+
+                      </p>
+
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        eliminarProducto(index)
+                      }
+                      className="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
+                    >
+                      Eliminar
+                    </button>
+
+                  </div>
+
+                ))}
+
+                <button
+                  onClick={finalizarPedido}
+                  className="mt-6 w-full rounded-2xl bg-black p-4 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-gray-800"
+                >
+                  Finalizar Pedido
+                </button>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </section>
+
+      )}
 
       {/* CATALOGO */}
       <section
@@ -427,7 +441,7 @@ export default function Home() {
             onChange={(e) =>
               setBusqueda(e.target.value)
             }
-            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none"
+            className="w-full rounded-2xl border border-gray-300 bg-white p-4 outline-none md:max-w-sm"
           />
 
           <div className="flex flex-wrap gap-3">
@@ -713,6 +727,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
