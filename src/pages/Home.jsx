@@ -22,6 +22,9 @@ export default function Home() {
 
   });
 
+  // ABRIR CARRITO
+  const [abrirCarrito, setAbrirCarrito] = useState(false);
+
   // OBTENER PRODUCTOS
   useEffect(() => {
 
@@ -60,7 +63,7 @@ export default function Home() {
     ...new Set(productos.map((p) => p.categoria)),
   ];
 
-  // FILTRAR PRODUCTOS
+  // FILTRO
   const productosFiltrados =
     categoriaActiva === "Todos"
       ? productos
@@ -76,7 +79,7 @@ export default function Home() {
 
   };
 
-  // ELIMINAR
+  // ELIMINAR DEL CARRITO
   const eliminarDelCarrito = (index) => {
 
     const nuevoCarrito = [...carrito];
@@ -98,7 +101,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#f7f4ef] text-black">
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 z-50 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
+      <nav className="fixed top-0 left-0 z-40 w-full border-b border-gray-200 bg-[#f7f4ef]/90 backdrop-blur">
 
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
@@ -136,14 +139,19 @@ export default function Home() {
           {/* DERECHA */}
           <div className="flex items-center gap-4">
 
-            {/* CARRITO ICON */}
-            <div className="rounded-full bg-white px-5 py-2 shadow-sm">
+            {/* CARRITO */}
+            <button
+              onClick={() =>
+                setAbrirCarrito(!abrirCarrito)
+              }
+              className="rounded-full bg-white px-5 py-2 shadow-sm transition hover:scale-105"
+            >
 
               🛒 {carrito.length}
 
-            </div>
+            </button>
 
-            {/* BOTÓN */}
+            {/* WHATSAPP */}
             <a
               href="https://wa.me/50252914227"
               target="_blank"
@@ -206,59 +214,72 @@ export default function Home() {
 
       </section>
 
-      {/* CARRITO */}
-      <section className="mx-auto mb-32 max-w-7xl px-6">
+      {/* CARRITO LATERAL */}
+      <div
+        className={`fixed top-0 right-0 z-50 h-full w-[380px] bg-white shadow-2xl transition-transform duration-300 ${
+          abrirCarrito
+            ? "translate-x-0"
+            : "translate-x-full"
+        }`}
+      >
 
-        <div className="rounded-[28px] bg-white p-8 shadow-md">
+        <div className="flex h-full flex-col">
 
-          <div className="mb-8 flex items-center justify-between">
+          {/* HEADER */}
+          <div className="flex items-center justify-between border-b p-6">
 
-            <h2 className="text-4xl font-bold">
-
+            <h2 className="text-3xl font-bold">
               Carrito
-
             </h2>
 
-            <span className="text-2xl font-semibold">
-
-              Total: Q{total}
-
-            </span>
+            <button
+              onClick={() =>
+                setAbrirCarrito(false)
+              }
+              className="text-2xl"
+            >
+              ✕
+            </button>
 
           </div>
 
-          {carrito.length === 0 ? (
+          {/* PRODUCTOS */}
+          <div className="flex-1 space-y-4 overflow-y-auto p-6">
 
-            <p className="text-lg text-gray-500">
+            {carrito.length === 0 ? (
 
-              Tu carrito está vacío
+              <p className="text-gray-500">
+                Tu carrito está vacío
+              </p>
 
-            </p>
+            ) : (
 
-          ) : (
-
-            <div className="space-y-5">
-
-              {carrito.map((item, index) => (
+              carrito.map((item, index) => (
 
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-2xl border border-gray-200 p-5"
+                  className="rounded-2xl border border-gray-200 p-4"
                 >
 
-                  <div>
+                  <div className="flex items-center gap-4">
 
-                    <h3 className="text-xl font-semibold">
+                    <img
+                      src={item.imagen}
+                      alt={item.nombre}
+                      className="h-20 w-20 rounded-xl object-cover"
+                    />
 
-                      {item.nombre}
+                    <div className="flex-1">
 
-                    </h3>
+                      <h3 className="font-semibold">
+                        {item.nombre}
+                      </h3>
 
-                    <p className="mt-1 text-gray-500">
+                      <p className="text-gray-500">
+                        Q{item.precio}
+                      </p>
 
-                      Q{item.precio}
-
-                    </p>
+                    </div>
 
                   </div>
 
@@ -266,39 +287,51 @@ export default function Home() {
                     onClick={() =>
                       eliminarDelCarrito(index)
                     }
-                    className="text-red-500 transition hover:text-red-700"
+                    className="mt-4 text-sm text-red-500"
                   >
                     Eliminar
                   </button>
 
                 </div>
 
-              ))}
+              ))
 
-              {/* FINALIZAR */}
-              <a
-                href={`https://wa.me/50252914227?text=${encodeURIComponent(
-                  carrito
-                    .map(
-                      (item) =>
-                        `${item.nombre} - Q${item.precio}`
-                    )
-                    .join("\n")
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="block rounded-2xl bg-black p-5 text-center text-lg text-white transition hover:bg-gray-800"
-              >
-                Finalizar Pedido
-              </a>
+            )}
+
+          </div>
+
+          {/* FOOTER */}
+          <div className="space-y-4 border-t p-6">
+
+            <div className="flex items-center justify-between text-xl font-bold">
+
+              <span>Total</span>
+
+              <span>Q{total}</span>
 
             </div>
 
-          )}
+            <a
+              href={`https://wa.me/50252914227?text=${encodeURIComponent(
+                carrito
+                  .map(
+                    (item) =>
+                      `${item.nombre} - Q${item.precio}`
+                  )
+                  .join("\n")
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block rounded-2xl bg-black p-4 text-center text-white transition hover:bg-gray-800"
+            >
+              Finalizar Pedido
+            </a>
+
+          </div>
 
         </div>
 
-      </section>
+      </div>
 
       {/* PRODUCTOS */}
       <section
@@ -503,5 +536,4 @@ export default function Home() {
 
   );
 }
-
 
