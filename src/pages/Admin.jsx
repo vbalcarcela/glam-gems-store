@@ -9,9 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-import {
-  signOut,
-} from "firebase/auth";
+import { signOut } from "firebase/auth";
 
 import { auth, db } from "../firebase";
 
@@ -21,18 +19,29 @@ export default function Admin() {
 
   const navigate = useNavigate();
 
-  const [productos, setProductos] = useState([]);
+  // PRODUCTOS
+  const [productos, setProductos] =
+    useState([]);
 
-  // FORMULARIO
-  const [nombre, setNombre] = useState("");
+  // ORDENES
+  const [ordenes, setOrdenes] =
+    useState([]);
 
-  const [precio, setPrecio] = useState("");
+  // FORM
+  const [nombre, setNombre] =
+    useState("");
 
-  const [imagen, setImagen] = useState("");
+  const [precio, setPrecio] =
+    useState("");
 
-  const [descripcion, setDescripcion] = useState("");
+  const [imagen, setImagen] =
+    useState("");
 
-  const [categoria, setCategoria] = useState("");
+  const [descripcion, setDescripcion] =
+    useState("");
+
+  const [categoria, setCategoria] =
+    useState("");
 
   // CLOUDINARY
   const [subiendoImagen, setSubiendoImagen] =
@@ -42,20 +51,24 @@ export default function Admin() {
   const [editandoId, setEditandoId] =
     useState(null);
 
-  // OBTENER PRODUCTOS
+  // OBTENER DATOS
   useEffect(() => {
 
     obtenerProductos();
 
+    obtenerOrdenes();
+
   }, []);
 
+  // PRODUCTOS
   const obtenerProductos = async () => {
 
     try {
 
-      const querySnapshot = await getDocs(
-        collection(db, "productos")
-      );
+      const querySnapshot =
+        await getDocs(
+          collection(db, "productos")
+        );
 
       const productosFirebase =
         querySnapshot.docs.map((doc) => ({
@@ -73,7 +86,75 @@ export default function Admin() {
 
   };
 
-  // SUBIR IMAGEN CLOUDINARY
+  // ORDENES
+  const obtenerOrdenes = async () => {
+
+    try {
+
+      const querySnapshot =
+        await getDocs(
+          collection(db, "ordenes")
+        );
+
+      const ordenesFirebase =
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+      setOrdenes(ordenesFirebase);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
+  // CAMBIAR ESTADO ORDEN
+  const cambiarEstadoOrden = async (
+    id,
+    nuevoEstado
+  ) => {
+
+    try {
+
+      await updateDoc(
+        doc(db, "ordenes", id),
+        {
+          estado: nuevoEstado,
+        }
+      );
+
+      setOrdenes(
+
+        ordenes.map((orden) =>
+
+          orden.id === id
+            ? {
+                ...orden,
+                estado: nuevoEstado,
+              }
+            : orden
+
+        )
+
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Error actualizando estado"
+      );
+
+    }
+
+  };
+
+  // SUBIR IMAGEN
   const subirImagen = async (file) => {
 
     if (!file) return;
@@ -125,7 +206,7 @@ export default function Admin() {
 
   };
 
-  // LIMPIAR FORMULARIO
+  // LIMPIAR
   const limpiarFormulario = () => {
 
     setNombre("");
@@ -142,7 +223,7 @@ export default function Admin() {
 
   };
 
-  // AGREGAR / EDITAR PRODUCTO
+  // GUARDAR PRODUCTO
   const guardarProducto = async (e) => {
 
     e.preventDefault();
@@ -177,7 +258,11 @@ export default function Admin() {
       if (editandoId) {
 
         await updateDoc(
-          doc(db, "productos", editandoId),
+          doc(
+            db,
+            "productos",
+            editandoId
+          ),
           productoData
         );
 
@@ -224,7 +309,7 @@ export default function Admin() {
 
       console.log(error);
 
-      alert("Error al guardar");
+      alert("Error guardando");
 
     }
 
@@ -239,9 +324,13 @@ export default function Admin() {
 
     setImagen(producto.imagen);
 
-    setDescripcion(producto.descripcion);
+    setDescripcion(
+      producto.descripcion
+    );
 
-    setCategoria(producto.categoria);
+    setCategoria(
+      producto.categoria
+    );
 
     setEditandoId(producto.id);
 
@@ -268,23 +357,25 @@ export default function Admin() {
       );
 
       setProductos(
+
         productos.filter(
           (producto) =>
             producto.id !== id
         )
+
       );
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Error al eliminar");
+      alert("Error eliminando");
 
     }
 
   };
 
-  // CERRAR SESION
+  // LOGOUT
   const cerrarSesion = async () => {
 
     await signOut(auth);
@@ -346,24 +437,20 @@ export default function Admin() {
       {/* CONTENT */}
       <main className="flex-1 p-6 lg:p-10">
 
-        {/* TOP */}
-        <div className="mb-10 flex items-center justify-between">
+        {/* HEADER */}
+        <div className="mb-10">
 
-          <div>
+          <h2 className="text-5xl font-black">
 
-            <h2 className="text-4xl font-black">
+            Dashboard
 
-              Dashboard
+          </h2>
 
-            </h2>
+          <p className="mt-2 text-gray-500">
 
-            <p className="mt-2 text-gray-500">
+            Bienvenido al panel administrativo.
 
-              Bienvenido al panel administrativo.
-
-            </p>
-
-          </div>
+          </p>
 
         </div>
 
@@ -380,7 +467,13 @@ export default function Admin() {
 
             <h3 className="text-4xl font-black">
 
-              Q0
+              Q
+              {ordenes.reduce(
+                (acc, orden) =>
+                  acc +
+                  Number(orden.total),
+                0
+              )}
 
             </h3>
 
@@ -412,7 +505,7 @@ export default function Admin() {
 
             <h3 className="text-4xl font-black">
 
-              0
+              {ordenes.length}
 
             </h3>
 
@@ -428,7 +521,13 @@ export default function Admin() {
 
             <h3 className="text-4xl font-black">
 
-              0
+              {
+                new Set(
+                  ordenes.map(
+                    (o) => o.cliente
+                  )
+                ).size
+              }
 
             </h3>
 
@@ -591,7 +690,6 @@ export default function Admin() {
         {/* PRODUCTOS */}
         <div className="mt-10 rounded-[32px] bg-white p-8 shadow-lg">
 
-          {/* HEADER */}
           <div className="mb-8 flex items-center justify-between">
 
             <h3 className="text-3xl font-black">
@@ -608,93 +706,241 @@ export default function Admin() {
 
           </div>
 
-          {/* LISTA */}
           <div className="space-y-5">
 
-            {productos.length === 0 ? (
+            {productos.map((producto) => (
 
-              <div className="rounded-3xl border border-dashed border-gray-300 p-10 text-center">
+              <div
+                key={producto.id}
+                className="flex flex-col gap-5 rounded-3xl border border-gray-200 p-5 lg:flex-row lg:items-center lg:justify-between"
+              >
 
-                <p className="text-lg text-gray-500">
+                {/* IZQUIERDA */}
+                <div className="flex items-center gap-5">
 
-                  No hay productos registrados.
+                  <img
+                    src={producto.imagen}
+                    alt={producto.nombre}
+                    className="h-24 w-24 rounded-2xl object-cover"
+                  />
 
-                </p>
+                  <div>
 
-              </div>
+                    <h4 className="text-xl font-bold">
 
-            ) : (
+                      {producto.nombre}
 
-              productos.map((producto) => (
+                    </h4>
 
-                <div
-                  key={producto.id}
-                  className="flex flex-col gap-5 rounded-3xl border border-gray-200 p-5 lg:flex-row lg:items-center lg:justify-between"
-                >
+                    <p className="mt-1 text-gray-500">
 
-                  {/* IZQUIERDA */}
-                  <div className="flex items-center gap-5">
+                      Q{producto.precio}
 
-                    <img
-                      src={producto.imagen}
-                      alt={producto.nombre}
-                      className="h-24 w-24 rounded-2xl object-cover"
-                    />
+                    </p>
 
-                    <div>
+                    <p className="mt-2 max-w-md text-sm text-gray-400">
 
-                      <h4 className="text-xl font-bold">
+                      {producto.descripcion}
 
-                        {producto.nombre}
-
-                      </h4>
-
-                      <p className="mt-1 text-gray-500">
-
-                        Q{producto.precio}
-
-                      </p>
-
-                      <p className="mt-2 max-w-md text-sm text-gray-400">
-
-                        {producto.descripcion}
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  {/* DERECHA */}
-                  <div className="flex gap-3">
-
-                    <button
-                      onClick={() =>
-                        editarProducto(producto)
-                      }
-                      className="rounded-2xl border border-gray-300 px-5 py-3 transition hover:bg-gray-100"
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        eliminarProducto(
-                          producto.id
-                        )
-                      }
-                      className="rounded-2xl bg-red-500 px-5 py-3 text-white transition hover:bg-red-600"
-                    >
-                      Eliminar
-                    </button>
+                    </p>
 
                   </div>
 
                 </div>
 
-              ))
+                {/* DERECHA */}
+                <div className="flex gap-3">
 
-            )}
+                  <button
+                    onClick={() =>
+                      editarProducto(
+                        producto
+                      )
+                    }
+                    className="rounded-2xl border border-gray-300 px-5 py-3 transition hover:bg-gray-100"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      eliminarProducto(
+                        producto.id
+                      )
+                    }
+                    className="rounded-2xl bg-red-500 px-5 py-3 text-white transition hover:bg-red-600"
+                  >
+                    Eliminar
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+        {/* ORDENES */}
+        <div className="mt-10 rounded-[32px] bg-white p-8 shadow-lg">
+
+          <div className="mb-8 flex items-center justify-between">
+
+            <h3 className="text-3xl font-black">
+
+              Órdenes
+
+            </h3>
+
+            <span className="text-gray-500">
+
+              {ordenes.length} órdenes
+
+            </span>
+
+          </div>
+
+          <div className="space-y-5">
+
+            {ordenes.map((orden) => (
+
+              <div
+                key={orden.id}
+                className="rounded-3xl border border-gray-200 p-6"
+              >
+
+                <div className="mb-5 flex items-center justify-between">
+
+                  <div>
+
+                    <h4 className="text-xl font-bold">
+
+                      Cliente:
+                      {" "}
+                      {orden.cliente}
+
+                    </h4>
+
+                    <p className="mt-1 text-gray-500">
+
+                      Estado:
+                      {" "}
+                      {orden.estado}
+
+                    </p>
+
+                    {/* BOTONES ESTADO */}
+                    <div className="mt-4 flex flex-wrap gap-3">
+
+                      <button
+                        onClick={() =>
+                          cambiarEstadoOrden(
+                            orden.id,
+                            "confirmado"
+                          )
+                        }
+                        className="rounded-xl bg-blue-500 px-4 py-2 text-sm text-white"
+                      >
+                        Confirmar
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          cambiarEstadoOrden(
+                            orden.id,
+                            "enviado"
+                          )
+                        }
+                        className="rounded-xl bg-yellow-500 px-4 py-2 text-sm text-white"
+                      >
+                        Enviado
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          cambiarEstadoOrden(
+                            orden.id,
+                            "entregado"
+                          )
+                        }
+                        className="rounded-xl bg-green-600 px-4 py-2 text-sm text-white"
+                      >
+                        Entregado
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                  <div className="text-right">
+
+                    <p className="text-3xl font-black">
+
+                      Q{orden.total}
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+                {/* PRODUCTOS ORDEN */}
+                <div className="space-y-4">
+
+                  {orden.productos?.map(
+                    (
+                      producto,
+                      index
+                    ) => (
+
+                      <div
+                        key={index}
+                        className="flex items-center gap-4 rounded-2xl bg-gray-50 p-4"
+                      >
+
+                        <img
+                          src={
+                            producto.imagen
+                          }
+                          alt={
+                            producto.nombre
+                          }
+                          className="h-20 w-20 rounded-2xl object-cover"
+                        />
+
+                        <div>
+
+                          <h5 className="font-bold">
+
+                            {
+                              producto.nombre
+                            }
+
+                          </h5>
+
+                          <p className="text-gray-500">
+
+                            Q
+                            {
+                              producto.precio
+                            }
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              </div>
+
+            ))}
 
           </div>
 
@@ -707,5 +953,7 @@ export default function Admin() {
   );
 
 }
+
+
 
 

@@ -7,6 +7,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase";
+import { stripePromise } from "../stripe";
 
 export default function Home() {
 
@@ -94,58 +95,96 @@ export default function Home() {
       acc + Number(item.precio),
     0
   );
+const finalizarPedido = async () => {
 
-  // FINALIZAR PEDIDO
-  const finalizarPedido = async () => {
+  if (carrito.length === 0) {
 
-    if (carrito.length === 0) {
+    alert("Tu carrito está vacío");
 
-      alert("Tu carrito está vacío");
+    return;
 
-      return;
+  }
 
-    }
+  try {
 
-    try {
+    // GUARDAR ORDEN FIREBASE
+    const nuevaOrden = {
 
-      const nuevaOrden = {
+      cliente: "50252914227",
 
-        cliente: "50252914227",
+      productos: carrito,
 
-        productos: carrito,
+      total: totalCarrito,
 
-        total: totalCarrito,
+      estado: "pendiente",
 
-        estado: "pendiente",
+      fecha: new Date(),
 
-        fecha: new Date(),
+    };
 
-      };
+    await addDoc(
+      collection(db, "ordenes"),
+      nuevaOrden
+    );
 
-      await addDoc(
-        collection(db, "ordenes"),
-        nuevaOrden
-      );
+    // STRIPE
+    const stripe =
+      await stripePromise;
 
-      alert(
-        "Pedido realizado correctamente"
-      );
+    await stripe.redirectToCheckout({
 
-      setCarrito([]);
+      lineItems: carrito.map(
+        (producto) => ({
 
-      setCarritoAbierto(false);
+          price_data: {
 
-    } catch (error) {
+            currency: "mxn",
 
-      console.log(error);
+            product_data: {
 
-      alert(
-        "Error al finalizar pedido"
-      );
+              name:
+                producto.nombre,
 
-    }
+            },
 
-  };
+            unit_amount:
+              Number(
+                producto.precio
+              ) * 100,
+
+          },
+
+          quantity: 1,
+
+        })
+      ),
+
+      mode: "payment",
+
+      successUrl:
+        window.location.origin,
+
+      cancelUrl:
+        window.location.origin,
+
+    });
+
+    setCarrito([]);
+
+    setCarritoAbierto(false);
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Error procesando pago"
+    );
+
+  }
+
+};
+
 
   // FILTRAR PRODUCTOS
   const productosFiltrados =
