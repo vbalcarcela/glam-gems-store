@@ -1,3 +1,4 @@
+import heroImage from "../assets/hero.png";
 import { useEffect, useState } from "react";
 
 import {
@@ -373,10 +374,10 @@ const finalizarPedido = async () => {
         <div>
 
           <img
-            src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop"
-            alt="joyas"
-            className="h-[520px] w-full rounded-[40px] object-cover shadow-2xl lg:h-[620px]"
-          />
+  src={heroImage}
+  alt="joyas"
+  className="h-[520px] w-full rounded-[40px] object-cover shadow-2xl lg:h-[620px]"
+/>
 
         </div>
 
