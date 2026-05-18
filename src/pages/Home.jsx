@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase";
-import { stripePromise } from "../stripe";
+
 
 export default function Home() {
 
@@ -107,10 +107,10 @@ const finalizarPedido = async () => {
 
   try {
 
-    // GUARDAR ORDEN FIREBASE
+    // CREAR ORDEN
     const nuevaOrden = {
 
-      cliente: "50252914227",
+      cliente: "WhatsApp",
 
       productos: carrito,
 
@@ -122,53 +122,41 @@ const finalizarPedido = async () => {
 
     };
 
+    // GUARDAR FIREBASE
     await addDoc(
       collection(db, "ordenes"),
       nuevaOrden
     );
 
-    // STRIPE
-    const stripe =
-      await stripePromise;
+    // PRODUCTOS TEXTO
+    const productosTexto =
+      carrito.map(
+        (producto) =>
 
-    await stripe.redirectToCheckout({
+          `• ${producto.nombre} - Q${producto.precio}`
 
-      lineItems: carrito.map(
-        (producto) => ({
+      ).join("%0A");
 
-          price_data: {
+    // MENSAJE
+    const mensaje =
 
-            currency: "mxn",
+      `Hola, quiero realizar este pedido:%0A%0A${productosTexto}%0A%0ATotal: Q${totalCarrito}`;
 
-            product_data: {
+    // ABRIR WHATSAPP
+    window.open(
 
-              name:
-                producto.nombre,
+      `https://wa.me/50252914227?text=${mensaje}`,
 
-            },
+      "_blank"
 
-            unit_amount:
-              Number(
-                producto.precio
-              ) * 100,
+    );
 
-          },
+    // ALERTA
+    alert(
+      "Pedido enviado correctamente"
+    );
 
-          quantity: 1,
-
-        })
-      ),
-
-      mode: "payment",
-
-      successUrl:
-        window.location.origin,
-
-      cancelUrl:
-        window.location.origin,
-
-    });
-
+    // LIMPIAR
     setCarrito([]);
 
     setCarritoAbierto(false);
@@ -178,7 +166,7 @@ const finalizarPedido = async () => {
     console.log(error);
 
     alert(
-      "Error procesando pago"
+      "Error procesando pedido"
     );
 
   }
